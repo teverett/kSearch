@@ -28,6 +28,8 @@ import org.elasticsearch.client.*;
 import org.elasticsearch.search.fetch.subphase.*;
 import org.slf4j.*;
 
+import com.khubla.ksearch.indexer.action.*;
+
 public class FileIndexerAction extends AbstractElasticAction {
 	/**
 	 * logger
