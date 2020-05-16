@@ -18,7 +18,7 @@ package com.khubla.ksearch;
 
 import org.apache.commons.cli.*;
 
-import com.khubla.ksearch.index.*;
+import com.khubla.ksearch.indexer.*;
 import com.khubla.ksearch.progress.impl.*;
 
 /**

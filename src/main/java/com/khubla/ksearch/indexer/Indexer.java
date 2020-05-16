@@ -14,7 +14,7 @@
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.khubla.ksearch.index;
+package com.khubla.ksearch.indexer;
 
 import java.io.*;
 import java.util.*;
@@ -24,6 +24,7 @@ import org.apache.commons.io.*;
 import org.slf4j.*;
 
 import com.khubla.ksearch.*;
+import com.khubla.ksearch.indexer.action.*;
 import com.khubla.ksearch.progress.*;
 
 public class Indexer {
@@ -42,6 +43,13 @@ public class Indexer {
 
 	public void index(ProgressCallback progressCallback) throws Exception {
 		try {
+			/*
+			 * start the cleaner
+			 */
+			executor.submit(new IndexCleanerAction());
+			/*
+			 * walk the files
+			 */
 			final String[] dirNames = Configuration.getConfiguration().getDirs();
 			for (final String dirName : dirNames) {
 				final File dir = new File(dirName);
