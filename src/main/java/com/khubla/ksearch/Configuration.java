@@ -49,8 +49,30 @@ public class Configuration {
 		return instance;
 	}
 
-	private String dir;
+	/**
+	 * dir to index
+	 */
+	private String[] dirs;
+	/**
+	 * extensions
+	 */
+	private String[] extensions;
+	/**
+	 * index threads
+	 */
 	private int threads;
+	/**
+	 * elastic ip
+	 */
+	private String elasticIp;
+	/**
+	 * elastic port
+	 */
+	private int elasticPort;
+	/**
+	 * elastic index
+	 */
+	private String elasticIndex;
 
 	/**
 	 * ctor
@@ -58,8 +80,24 @@ public class Configuration {
 	private Configuration() {
 	}
 
-	public String getDir() {
-		return dir;
+	public String[] getDirs() {
+		return dirs;
+	}
+
+	public String getElasticIndex() {
+		return elasticIndex;
+	}
+
+	public String getElasticIp() {
+		return elasticIp;
+	}
+
+	public int getElasticPort() {
+		return elasticPort;
+	}
+
+	public String[] getExtensions() {
+		return extensions;
 	}
 
 	public int getThreads() {
@@ -74,18 +112,47 @@ public class Configuration {
 			final Properties properties = new Properties();
 			properties.load(new FileInputStream(propertiesFile));
 			threads = Integer.parseInt(properties.getProperty("threads"));
-			dir = properties.getProperty("dir");
+			dirs = split(properties.getProperty("dirs"));
+			extensions = split(properties.getProperty("extensions"));
+			elasticPort = Integer.parseInt(properties.getProperty("elastic.port"));
+			elasticIp = properties.getProperty("elastic.ip");
+			elasticIndex = properties.getProperty("elastic.index");
 		} catch (final Exception e) {
 			logger.error(e.getMessage());
 			throw e;
 		}
 	}
 
-	public void setDir(String dir) {
-		this.dir = dir;
+	public void setDirs(String[] dirs) {
+		this.dirs = dirs;
+	}
+
+	public void setElasticIndex(String elasticIndex) {
+		this.elasticIndex = elasticIndex;
+	}
+
+	public void setElasticIp(String elasticIp) {
+		this.elasticIp = elasticIp;
+	}
+
+	public void setElasticPort(int elasticPort) {
+		this.elasticPort = elasticPort;
+	}
+
+	public void setExtensions(String[] extensions) {
+		this.extensions = extensions;
 	}
 
 	public void setThreads(int threads) {
 		this.threads = threads;
+	}
+
+	private String[] split(String list) {
+		final String[] str = list.split(",");
+		final String[] ret = new String[str.length];
+		for (int i = 0; i < ret.length; i++) {
+			ret[i] = str[i].trim();
+		}
+		return ret;
 	}
 }

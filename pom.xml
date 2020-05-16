@@ -53,7 +53,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.elasticsearch.client</groupId>
-			<artifactId>transport</artifactId>
+			<artifactId>elasticsearch-rest-high-level-client</artifactId>
 			<version>${elastic.version}</version>
 		</dependency>
 		<dependency>

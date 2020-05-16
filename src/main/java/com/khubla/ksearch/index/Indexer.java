@@ -42,30 +42,33 @@ public class Indexer {
 
 	public void index(ProgressCallback progressCallback) throws Exception {
 		try {
-			final File dir = new File(Configuration.getConfiguration().getDir());
-			if (dir.exists()) {
-				/*
-				 * find files
-				 */
-				if (null != progressCallback) {
-					progressCallback.status("Finding files in " + dir.getPath());
+			final String[] dirNames = Configuration.getConfiguration().getDirs();
+			for (final String dirName : dirNames) {
+				final File dir = new File(dirName);
+				if (dir.exists()) {
+					/*
+					 * find files
+					 */
+					if (null != progressCallback) {
+						progressCallback.status("Finding files in " + dir.getPath());
+					}
+					final List<File> files = listFiles(dir);
+					if (null != progressCallback) {
+						progressCallback.status("Found '" + files.size() + "'  files in " + dir.getPath());
+					}
+					/*
+					 * walk the files
+					 */
+					for (final File file : files) {
+						final FileIndexer fileIndexer = new FileIndexer(file);
+						executor.submit(fileIndexer);
+					}
+					/*
+					 * wait
+					 */
+					executor.shutdown();
+					executor.awaitTermination(30, TimeUnit.DAYS);
 				}
-				final List<File> files = listFiles(dir);
-				if (null != progressCallback) {
-					progressCallback.status("Found '" + files.size() + "'  files in " + dir.getPath());
-				}
-				/*
-				 * walk the files
-				 */
-				for (final File file : files) {
-					final FileIndexer fileIndexer = new FileIndexer(file);
-					executor.submit(fileIndexer);
-				}
-				/*
-				 * wait
-				 */
-				executor.shutdown();
-				executor.awaitTermination(30, TimeUnit.DAYS);
 			}
 		} catch (final Exception e) {
 			logger.error(e.getMessage(), e);
@@ -77,7 +80,7 @@ public class Indexer {
 		final List<File> ret = new ArrayList<File>();
 		if (dir.exists()) {
 			if (dir.isDirectory()) {
-				final Collection<File> files = FileUtils.listFiles(dir, null, true);
+				final Collection<File> files = FileUtils.listFiles(dir, Configuration.getConfiguration().getExtensions(), true);
 				if (null != files) {
 					ret.addAll(files);
 				}
