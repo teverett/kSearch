@@ -14,7 +14,7 @@
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.khubla.ksearch;
+package com.khubla.ksearch.index;
 
 import java.io.*;
 import java.util.*;
@@ -23,6 +23,7 @@ import java.util.concurrent.*;
 import org.apache.commons.io.*;
 import org.slf4j.*;
 
+import com.khubla.ksearch.*;
 import com.khubla.ksearch.progress.*;
 
 public class Indexer {
@@ -34,19 +35,14 @@ public class Indexer {
 	 * executor
 	 */
 	private final ExecutorService executor;
-	/**
-	 * config
-	 */
-	private final Configuration configuration;
 
-	public Indexer(Configuration configuration) {
-		this.configuration = configuration;
-		executor = Executors.newFixedThreadPool(configuration.getThreads());
+	public Indexer() throws Exception {
+		executor = Executors.newFixedThreadPool(Configuration.getConfiguration().getThreads());
 	}
 
 	public void index(ProgressCallback progressCallback) throws Exception {
 		try {
-			final File dir = new File(configuration.getDir());
+			final File dir = new File(Configuration.getConfiguration().getDir());
 			if (dir.exists()) {
 				/*
 				 * find files
@@ -62,10 +58,8 @@ public class Indexer {
 				 * walk the files
 				 */
 				for (final File file : files) {
-					/*
-					 * get or create file
-					 */
-					System.out.println(file.getName());
+					final FileIndexer fileIndexer = new FileIndexer(file);
+					executor.submit(fileIndexer);
 				}
 				/*
 				 * wait

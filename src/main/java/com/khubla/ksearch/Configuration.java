@@ -19,9 +19,44 @@ package com.khubla.ksearch;
 import java.io.*;
 import java.util.*;
 
+import org.slf4j.*;
+
 public class Configuration {
+	/**
+	 * logger
+	 */
+	private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
+	/**
+	 * singleton
+	 */
+	private static Configuration instance;
+	/**
+	 * filename
+	 */
+	public static String propertiesFile = "kSearch.properties";
+
+	/**
+	 * singleton getter
+	 *
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
+	public static Configuration getConfiguration() throws Exception {
+		if (null == instance) {
+			instance = new Configuration();
+			instance.load(propertiesFile);
+		}
+		return instance;
+	}
+
 	private String dir;
 	private int threads;
+
+	/**
+	 * ctor
+	 */
+	private Configuration() {
+	}
 
 	public String getDir() {
 		return dir;
@@ -31,14 +66,19 @@ public class Configuration {
 		return threads;
 	}
 
-	public void load(String propertiesFile) throws FileNotFoundException, IOException {
-		/*
-		 * properties
-		 */
-		final Properties properties = new Properties();
-		properties.load(new FileInputStream(propertiesFile));
-		threads = Integer.parseInt(properties.getProperty("threads"));
-		dir = properties.getProperty("dir");
+	private void load(String propertiesFile) throws Exception {
+		try {
+			/*
+			 * properties
+			 */
+			final Properties properties = new Properties();
+			properties.load(new FileInputStream(propertiesFile));
+			threads = Integer.parseInt(properties.getProperty("threads"));
+			dir = properties.getProperty("dir");
+		} catch (final Exception e) {
+			logger.error(e.getMessage());
+			throw e;
+		}
 	}
 
 	public void setDir(String dir) {

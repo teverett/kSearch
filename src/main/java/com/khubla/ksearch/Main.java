@@ -18,6 +18,7 @@ package com.khubla.ksearch;
 
 import org.apache.commons.cli.*;
 
+import com.khubla.ksearch.index.*;
 import com.khubla.ksearch.progress.impl.*;
 
 /**
@@ -56,12 +57,14 @@ public class Main {
 			 */
 			final String configFilename = cmd.getOptionValue(CONFIG_OPTION);
 			if (null != configFilename) {
-				final Configuration configuration = new Configuration();
-				configuration.load(configFilename);
+				/*
+				 * set the name
+				 */
+				Configuration.propertiesFile = configFilename;
 				/*
 				 * index
 				 */
-				final Indexer indexer = new Indexer(configuration);
+				final Indexer indexer = new Indexer();
 				indexer.index(new DefaultProgressImpl());
 			} else {
 				throw new Exception("File was not supplied");
