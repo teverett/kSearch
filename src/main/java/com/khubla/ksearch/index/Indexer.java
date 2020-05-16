@@ -60,7 +60,7 @@ public class Indexer {
 					 * walk the files
 					 */
 					for (final File file : files) {
-						final FileIndexer fileIndexer = new FileIndexer(file);
+						final FileIndexerAction fileIndexer = new FileIndexerAction(file);
 						executor.submit(fileIndexer);
 					}
 					/*
