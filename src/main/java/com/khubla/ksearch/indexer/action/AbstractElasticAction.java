@@ -16,62 +16,22 @@
  */
 package com.khubla.ksearch.indexer.action;
 
-import java.io.*;
-
-import org.apache.http.*;
-import org.elasticsearch.client.*;
 import org.slf4j.*;
 
-public abstract class AbstractElasticAction implements Runnable, Closeable {
+import com.khubla.ksearch.service.*;
+
+public abstract class AbstractElasticAction implements Runnable {
 	/**
 	 * logger
 	 */
 	private static final Logger logger = LoggerFactory.getLogger(AbstractElasticAction.class);
 	/**
-	 * client
+	 * elastic
 	 */
-	protected final RestHighLevelClient client;
-	/**
-	 * host
-	 */
-	protected final String elasticHost;
-	/**
-	 * port
-	 */
-	protected final int elasticPort;
-	/**
-	 * indexName
-	 */
-	protected final String indexName;
+	protected final ElasticService elasticService;
 
-	/**
-	 * ctor
-	 *
-	 * @param file
-	 * @throws Exception
-	 */
 	public AbstractElasticAction() throws Exception {
-		/*
-		 * data
-		 */
-		indexName = com.khubla.ksearch.Configuration.getConfiguration().getElasticIndex();
-		elasticHost = com.khubla.ksearch.Configuration.getConfiguration().getElasticHost();
-		elasticPort = com.khubla.ksearch.Configuration.getConfiguration().getElasticPort();
-		/*
-		 * connect
-		 */
-		client = new RestHighLevelClient(RestClient.builder(new HttpHost(elasticHost, elasticPort, "http")));
-	}
-
-	@Override
-	public void close() {
-		try {
-			if (null != client) {
-				client.close();
-			}
-		} catch (final IOException e) {
-			logger.error("Exception closeing ", e);
-		}
+		elasticService = new ElasticService();
 	}
 
 	protected abstract void doAction();
@@ -83,7 +43,7 @@ public abstract class AbstractElasticAction implements Runnable, Closeable {
 		} catch (final Exception e) {
 			logger.error("Exception in run()", e);
 		} finally {
-			close();
+			elasticService.close();
 		}
 	}
 }

@@ -17,15 +17,7 @@
 package com.khubla.ksearch.indexer.action.impl;
 
 import java.io.*;
-import java.nio.charset.*;
-import java.nio.file.*;
-import java.util.*;
 
-import org.elasticsearch.action.get.*;
-import org.elasticsearch.action.index.*;
-import org.elasticsearch.action.update.*;
-import org.elasticsearch.client.*;
-import org.elasticsearch.search.fetch.subphase.*;
 import org.slf4j.*;
 
 import com.khubla.ksearch.indexer.action.*;
@@ -35,18 +27,6 @@ public class FileIndexerAction extends AbstractElasticAction {
 	 * logger
 	 */
 	private static final Logger logger = LoggerFactory.getLogger(FileIndexerAction.class);
-	/**
-	 * filedate
-	 */
-	private static final String FILEDATE = "filedate";
-	/**
-	 * data
-	 */
-	private static final String DATA = "data";
-	/**
-	 * date
-	 */
-	private static final String DATE = "date";
 	/**
 	 * File
 	 */
@@ -63,21 +43,6 @@ public class FileIndexerAction extends AbstractElasticAction {
 		this.file = file;
 	}
 
-	/**
-	 * build the JSON payload for elastic
-	 *
-	 * @return
-	 * @throws IOException
-	 */
-	private Map<String, Object> buildFileMap() throws IOException {
-		final String fileData = readFile(file);
-		final Map<String, Object> jsonMap = new HashMap<>();
-		jsonMap.put(DATA, fileData);
-		jsonMap.put(DATE, new Date());
-		jsonMap.put(FILEDATE, file.lastModified());
-		return jsonMap;
-	}
-
 	@Override
 	public void doAction() {
 		try {
@@ -85,105 +50,23 @@ public class FileIndexerAction extends AbstractElasticAction {
 			/*
 			 * exists?
 			 */
-			if (exists()) {
+			if (elasticService.exists(file)) {
 				/*
 				 * needs update?
 				 */
-				final long filedate = filedate();
+				final long filedate = elasticService.filedate(file);
 				if (filedate < file.lastModified()) {
 					logger.info("Updating: " + file.getAbsolutePath());
-					update();
+					elasticService.update(file);
 				} else {
 					logger.info("Skipped: " + file.getAbsolutePath());
 				}
 			} else {
 				logger.info("Writing: " + file.getAbsolutePath());
-				write();
+				elasticService.write(file);
 			}
 		} catch (final Exception e) {
 			logger.error("Exception indexing '" + file.getAbsolutePath() + "'", e);
 		}
-	}
-
-	/**
-	 * check if file exists
-	 *
-	 * @return exists
-	 * @throws IOException
-	 */
-	private boolean exists() throws IOException {
-		final GetRequest getRequest = new GetRequest(indexName, file.getAbsolutePath());
-		getRequest.fetchSourceContext(new FetchSourceContext(false));
-		getRequest.storedFields("_none_");
-		return client.exists(getRequest, RequestOptions.DEFAULT);
-	}
-
-	/**
-	 * get the file date
-	 *
-	 * @return file date
-	 * @throws IOException
-	 */
-	private long filedate() throws IOException {
-		final GetRequest getRequest = new GetRequest(indexName, file.getAbsolutePath());
-		final String[] includes = new String[] { FILEDATE };
-		final String[] excludes = new String[] { DATA };
-		getRequest.fetchSourceContext(new FetchSourceContext(true, includes, excludes));
-		final GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
-		final Object o = getResponse.getSource().get(FILEDATE);
-		if (null != o) {
-			return (Long) o;
-		}
-		return 0;
-	}
-
-	/**
-	 * read file as text
-	 *
-	 * @param file
-	 * @return file text
-	 * @throws IOException
-	 */
-	private String readFile(File file) throws IOException {
-		return new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())), StandardCharsets.UTF_8);
-	}
-
-	/**
-	 * update file data
-	 *
-	 * @throws IOException
-	 */
-	private void update() throws IOException {
-		/*
-		 * file map
-		 */
-		final Map<String, Object> jsonMap = buildFileMap();
-		/*
-		 * update
-		 */
-		final UpdateRequest updateRequest = new UpdateRequest(indexName, file.getAbsolutePath());
-		updateRequest.doc(jsonMap);
-		final UpdateResponse updateResponse = client.update(updateRequest, RequestOptions.DEFAULT);
-		logger.info(updateResponse.toString());
-	}
-
-	/**
-	 * write file data
-	 *
-	 * @throws IOException
-	 */
-	private void write() throws IOException {
-		/*
-		 * file map
-		 */
-		final Map<String, Object> jsonMap = buildFileMap();
-		/*
-		 * index
-		 */
-		final IndexRequest request = new IndexRequest(indexName);
-		request.id(file.getAbsolutePath());
-		request.source(jsonMap);
-		final IndexResponse indexResponse = client.index(request, RequestOptions.DEFAULT);
-		logger.info(indexResponse.toString());
 	}
 }
