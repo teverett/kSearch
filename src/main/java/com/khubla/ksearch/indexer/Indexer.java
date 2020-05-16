@@ -25,6 +25,7 @@ import org.slf4j.*;
 
 import com.khubla.ksearch.*;
 import com.khubla.ksearch.indexer.action.*;
+import com.khubla.ksearch.indexer.action.impl.*;
 import com.khubla.ksearch.progress.*;
 
 public class Indexer {

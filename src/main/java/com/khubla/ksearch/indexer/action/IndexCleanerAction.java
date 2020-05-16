@@ -18,6 +18,8 @@ package com.khubla.ksearch.indexer.action;
 
 import org.slf4j.*;
 
+import com.khubla.ksearch.indexer.action.impl.*;
+
 public class IndexCleanerAction extends AbstractElasticAction {
 	/**
 	 * logger
