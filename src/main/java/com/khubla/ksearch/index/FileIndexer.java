@@ -52,10 +52,10 @@ public class FileIndexer implements Runnable {
 			/*
 			 * connect
 			 */
-			final String elasticIp = com.khubla.ksearch.Configuration.getConfiguration().getElasticIp();
+			final String elasticHost = com.khubla.ksearch.Configuration.getConfiguration().getElasticHost();
 			final int elasticPort = com.khubla.ksearch.Configuration.getConfiguration().getElasticPort();
 			final String indexName = com.khubla.ksearch.Configuration.getConfiguration().getElasticIndex();
-			client = new RestHighLevelClient(RestClient.builder(new HttpHost(elasticIp, elasticPort, "http")));
+			client = new RestHighLevelClient(RestClient.builder(new HttpHost(elasticHost, elasticPort, "http")));
 			/*
 			 * file string
 			 */

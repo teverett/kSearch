@@ -13,7 +13,7 @@
 		<logback.version>1.2.3</logback.version>
 		<commons-cli.version>1.4</commons-cli.version>
 		<commons-io.version>2.6</commons-io.version>
-		<elastic.version>7.7.0</elastic.version>
+		<elastic.version>7.6.1</elastic.version>
 	</properties>
 	<developers>
 		<developer>

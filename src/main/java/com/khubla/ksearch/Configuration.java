@@ -62,9 +62,9 @@ public class Configuration {
 	 */
 	private int threads;
 	/**
-	 * elastic ip
+	 * elastic host
 	 */
-	private String elasticIp;
+	private String elasticHost;
 	/**
 	 * elastic port
 	 */
@@ -84,12 +84,12 @@ public class Configuration {
 		return dirs;
 	}
 
-	public String getElasticIndex() {
-		return elasticIndex;
+	public String getElasticHost() {
+		return elasticHost;
 	}
 
-	public String getElasticIp() {
-		return elasticIp;
+	public String getElasticIndex() {
+		return elasticIndex;
 	}
 
 	public int getElasticPort() {
@@ -115,8 +115,8 @@ public class Configuration {
 			dirs = split(properties.getProperty("dirs"));
 			extensions = split(properties.getProperty("extensions"));
 			elasticPort = Integer.parseInt(properties.getProperty("elastic.port"));
-			elasticIp = properties.getProperty("elastic.ip");
-			elasticIndex = properties.getProperty("elastic.index");
+			elasticHost = properties.getProperty("elastic.host").trim();
+			elasticIndex = properties.getProperty("elastic.index").trim();
 		} catch (final Exception e) {
 			logger.error(e.getMessage());
 			throw e;
@@ -127,12 +127,12 @@ public class Configuration {
 		this.dirs = dirs;
 	}
 
-	public void setElasticIndex(String elasticIndex) {
-		this.elasticIndex = elasticIndex;
+	public void setElasticHost(String elasticHost) {
+		this.elasticHost = elasticHost;
 	}
 
-	public void setElasticIp(String elasticIp) {
-		this.elasticIp = elasticIp;
+	public void setElasticIndex(String elasticIndex) {
+		this.elasticIndex = elasticIndex;
 	}
 
 	public void setElasticPort(int elasticPort) {
