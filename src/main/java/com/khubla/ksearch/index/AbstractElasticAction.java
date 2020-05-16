@@ -73,4 +73,17 @@ public abstract class AbstractElasticAction implements Runnable, Closeable {
 			logger.error("Exception closeing ", e);
 		}
 	}
+
+	protected abstract void doAction();
+
+	@Override
+	public void run() {
+		try {
+			doAction();
+		} catch (final Exception e) {
+			logger.error("Exception in run()", e);
+		} finally {
+			close();
+		}
+	}
 }

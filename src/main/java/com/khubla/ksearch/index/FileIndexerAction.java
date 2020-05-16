@@ -76,6 +76,33 @@ public class FileIndexerAction extends AbstractElasticAction {
 		return jsonMap;
 	}
 
+	@Override
+	public void doAction() {
+		try {
+			logger.info("Indexing: " + file.getAbsolutePath());
+			/*
+			 * exists?
+			 */
+			if (exists()) {
+				/*
+				 * needs update?
+				 */
+				final long filedate = filedate();
+				if (filedate < file.lastModified()) {
+					logger.info("Updating: " + file.getAbsolutePath());
+					update();
+				} else {
+					logger.info("Skipped: " + file.getAbsolutePath());
+				}
+			} else {
+				logger.info("Writing: " + file.getAbsolutePath());
+				write();
+			}
+		} catch (final Exception e) {
+			logger.error("Exception indexing '" + file.getAbsolutePath() + "'", e);
+		}
+	}
+
 	/**
 	 * check if file exists
 	 *
@@ -117,35 +144,6 @@ public class FileIndexerAction extends AbstractElasticAction {
 	 */
 	private String readFile(File file) throws IOException {
 		return new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())), StandardCharsets.UTF_8);
-	}
-
-	@Override
-	public void run() {
-		try {
-			logger.info("Indexing: " + file.getAbsolutePath());
-			/*
-			 * exists?
-			 */
-			if (exists()) {
-				/*
-				 * needs update?
-				 */
-				final long filedate = filedate();
-				if (filedate < file.lastModified()) {
-					logger.info("Updating: " + file.getAbsolutePath());
-					update();
-				} else {
-					logger.info("Skipped: " + file.getAbsolutePath());
-				}
-			} else {
-				logger.info("Writing: " + file.getAbsolutePath());
-				write();
-			}
-		} catch (final Exception e) {
-			logger.error("Exception indexing '" + file.getAbsolutePath() + "'", e);
-		} finally {
-			close();
-		}
 	}
 
 	/**
