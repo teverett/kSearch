@@ -34,6 +34,8 @@ public class PDFFileReaderImpl implements FileReader {
 	@Override
 	public String read(File file) throws IOException {
 		final PDDocument pdDocument = PDDocument.load(file);
-		return new PDFTextStripper().getText(pdDocument);
+		String ret = new PDFTextStripper().getText(pdDocument);
+		pdDocument.close();
+		return ret;
 	}
 }
