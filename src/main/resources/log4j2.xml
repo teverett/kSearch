@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" strict="true" name="XMLConfigTest" packages="org.apache.logging.log4j.test">
+	<Properties>
+		<Property name="filename">ksearch.log</Property>
+	</Properties>
+	<Filter type="ThresholdFilter" level="trace" />
+
+	<Appenders>
+		<Appender type="Console" name="STDOUT">
+			<Layout type="PatternLayout" pattern="%m MDC%X%n" />
+		</Appender>
+		<Appender type="File" name="File" fileName="${filename}">
+			<Layout type="PatternLayout">
+				<Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
+			</Layout>
+		</Appender>
+	</Appenders>
+	<Loggers>
+		<Logger name="org.eclipse" level="debug" additivity="false">
+			<AppenderRef ref="File" />
+		</Logger>
+		<Logger name="com.khubla.ksearch" level="debug" additivity="false">
+			<AppenderRef ref="File" />
+		</Logger>
+		<Logger name="spark" level="debug" additivity="false">
+			<AppenderRef ref="File" />
+		</Logger>
+		<Root level="trace">
+			<AppenderRef ref="STDOUT" />
+		</Root>
+	</Loggers>
+</Configuration>

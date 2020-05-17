@@ -10,12 +10,12 @@
 		<target.jvm>1.8</target.jvm>
 		<required-maven-version>3.3.1</required-maven-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<logback.version>1.2.3</logback.version>
 		<commons-cli.version>1.4</commons-cli.version>
 		<commons-io.version>2.6</commons-io.version>
 		<elastic.version>7.7.0</elastic.version>
 		<spark.version>2.9.1</spark.version>
 		<jetty.version>9.4.28.v20200408</jetty.version>
+		<log4j.version>2.13.3</log4j.version>
 	</properties>
 	<developers>
 		<developer>
@@ -68,9 +68,14 @@
 			<version>${jetty.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.elasticsearch.client</groupId>

@@ -22,6 +22,7 @@ import java.nio.file.*;
 import java.util.*;
 
 import org.apache.http.*;
+import org.apache.logging.log4j.*;
 import org.elasticsearch.action.delete.*;
 import org.elasticsearch.action.get.*;
 import org.elasticsearch.action.index.*;
@@ -33,13 +34,12 @@ import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.*;
 import org.elasticsearch.search.builder.*;
 import org.elasticsearch.search.fetch.subphase.*;
-import org.slf4j.*;
 
 public class ElasticService implements Closeable {
 	/**
 	 * logger
 	 */
-	private static final Logger logger = LoggerFactory.getLogger(ElasticService.class);
+	private static final Logger logger = LogManager.getLogger(ElasticService.class);
 	/**
 	 * filedate
 	 */

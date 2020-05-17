@@ -16,7 +16,7 @@
  */
 package com.khubla.ksearch.indexer.action;
 
-import org.slf4j.*;
+import org.apache.logging.log4j.*;
 
 import com.khubla.ksearch.service.*;
 
@@ -24,7 +24,7 @@ public abstract class AbstractElasticAction implements Runnable {
 	/**
 	 * logger
 	 */
-	private static final Logger logger = LoggerFactory.getLogger(AbstractElasticAction.class);
+	private static final Logger logger = LogManager.getLogger(AbstractElasticAction.class);
 	/**
 	 * elastic
 	 */

@@ -18,7 +18,7 @@ package com.khubla.ksearch.indexer;
 
 import java.util.concurrent.*;
 
-import org.slf4j.*;
+import org.apache.logging.log4j.*;
 
 import com.khubla.ksearch.progress.*;
 
@@ -26,7 +26,7 @@ public class IndexScheduler {
 	/**
 	 * logger
 	 */
-	private static final Logger logger = LoggerFactory.getLogger(IndexScheduler.class);
+	private static final Logger logger = LogManager.getLogger(IndexScheduler.class);
 	/**
 	 * callnback
 	 */

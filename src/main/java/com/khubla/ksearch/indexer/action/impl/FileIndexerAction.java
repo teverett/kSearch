@@ -18,7 +18,7 @@ package com.khubla.ksearch.indexer.action.impl;
 
 import java.io.*;
 
-import org.slf4j.*;
+import org.apache.logging.log4j.*;
 
 import com.khubla.ksearch.indexer.action.*;
 
@@ -26,7 +26,7 @@ public class FileIndexerAction extends AbstractElasticAction {
 	/**
 	 * logger
 	 */
-	private static final Logger logger = LoggerFactory.getLogger(FileIndexerAction.class);
+	private static final Logger logger = LogManager.getLogger(FileIndexerAction.class);
 	/**
 	 * File
 	 */

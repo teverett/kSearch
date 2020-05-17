@@ -18,7 +18,7 @@ package com.khubla.ksearch.indexer.action.impl;
 
 import java.io.*;
 
-import org.slf4j.*;
+import org.apache.logging.log4j.*;
 
 import com.khubla.ksearch.indexer.action.*;
 import com.khubla.ksearch.service.*;
@@ -27,7 +27,7 @@ public class IndexCleanerAction extends AbstractElasticAction implements FileIte
 	/**
 	 * logger
 	 */
-	private static final Logger logger = LoggerFactory.getLogger(IndexCleanerAction.class);
+	private static final Logger logger = LogManager.getLogger(IndexCleanerAction.class);
 
 	/**
 	 * ctor

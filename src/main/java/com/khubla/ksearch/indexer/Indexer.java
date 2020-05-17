@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 import org.apache.commons.io.*;
-import org.slf4j.*;
+import org.apache.logging.log4j.*;
 
 import com.khubla.ksearch.*;
 import com.khubla.ksearch.indexer.action.impl.*;
@@ -31,7 +31,7 @@ public class Indexer implements Runnable {
 	/**
 	 * logger
 	 */
-	private static final Logger logger = LoggerFactory.getLogger(Indexer.class);
+	private static final Logger logger = LogManager.getLogger(Indexer.class);
 	/**
 	 * callnback
 	 */

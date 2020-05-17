@@ -19,13 +19,13 @@ package com.khubla.ksearch;
 import java.io.*;
 import java.util.*;
 
-import org.slf4j.*;
+import org.apache.logging.log4j.*;
 
 public class Configuration {
 	/**
 	 * logger
 	 */
-	private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
+	private static final Logger logger = LogManager.getLogger(Configuration.class);
 	/**
 	 * singleton
 	 */
