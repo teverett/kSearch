@@ -65,6 +65,7 @@ public class Indexer implements Runnable {
 		 */
 		@Override
 		public boolean accept(File dir, String name) {
+			System.out.println("Dir " + dir.getAbsolutePath());
 			return true;
 		}
 	}
