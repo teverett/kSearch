@@ -7,7 +7,7 @@
 		<main role="main" class="flex-shrink-0">
 		  	<div class="container">
 		    <h1 class="mt-5">Khubla.com Search</h1>
-		    <table class="table">
+		    <table class="table table-sm">
 			  <thead>
 			    <tr>
 			      <th scope="col">Indexed Files</th>
