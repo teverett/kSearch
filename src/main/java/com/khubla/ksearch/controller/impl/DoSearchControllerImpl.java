@@ -32,7 +32,6 @@ public class DoSearchControllerImpl extends AbstractController {
 
 	public Object renderPOST(Request request, Response response) throws Exception {
 		String searchTerm = request.queryParams("searchterm");
-		searchTerm = "subway";
 		ElasticService elasticService = ServiceFactory.getInstance().getElasticService();
 		List<String> results = elasticService.search(searchTerm);
 		this.addAttribute("results", results);
