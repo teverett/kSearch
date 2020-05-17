@@ -7,6 +7,20 @@
 		<main role="main" class="flex-shrink-0">
 		  	<div class="container">
 		    <h1 class="mt-5">Khubla.com Search</h1>
+		    <table class="table">
+			  <thead>
+			    <tr>
+			      <th scope="col">Document</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr>
+			      <#list results as result>
+			      <th scope="row">${result}</th>
+			      </#list>
+			    </tr>			
+			  </tbody>
+			</table>
 		  	</div>
 		</main>
 		<#include "footer.ftl">

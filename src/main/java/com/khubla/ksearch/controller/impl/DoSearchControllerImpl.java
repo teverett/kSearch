@@ -16,13 +16,26 @@
  */
 package com.khubla.ksearch.controller.impl;
 
+import java.util.*;
+
 import com.khubla.ksearch.controller.*;
+import com.khubla.ksearch.service.*;
 
 import spark.*;
 
 public class DoSearchControllerImpl extends AbstractController {
 	@Override
 	public Object renderGET(Request request, Response response) throws Exception {
+		String searchTerm = request.queryParams("searchterm");
+		return renderFTL("results.ftl");
+	}
+
+	public Object renderPOST(Request request, Response response) throws Exception {
+		String searchTerm = request.queryParams("searchterm");
+		searchTerm = "subway";
+		ElasticService elasticService = ServiceFactory.getInstance().getElasticService();
+		List<String> results = elasticService.search(searchTerm);
+		this.addAttribute("results", results);
 		return renderFTL("results.ftl");
 	}
 }

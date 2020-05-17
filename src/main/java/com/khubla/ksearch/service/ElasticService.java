@@ -28,6 +28,7 @@ import org.elasticsearch.action.index.*;
 import org.elasticsearch.action.search.*;
 import org.elasticsearch.action.update.*;
 import org.elasticsearch.client.*;
+import org.elasticsearch.common.unit.*;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.*;
 import org.elasticsearch.search.builder.*;
@@ -225,5 +226,28 @@ public class ElasticService implements Closeable {
 		request.source(jsonMap);
 		final IndexResponse indexResponse = client.index(request, RequestOptions.DEFAULT);
 		logger.info(indexResponse.toString());
+	}
+
+	/**
+	 * search
+	 *
+	 * @throws IOException
+	 */
+	public List<String> search(String searchTerm) throws IOException {
+		List<String> ret = new ArrayList<String>();
+		final SearchRequest searchRequest = new SearchRequest(indexName);
+		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder(DATA, searchTerm).fuzziness(Fuzziness.AUTO);
+		searchSourceBuilder.query(matchQueryBuilder);
+		final String[] includeFields = new String[] { FILEDATE };
+		final String[] excludeFields = new String[] { DATA };
+		searchSourceBuilder.fetchSource(includeFields, excludeFields);
+		searchRequest.source(searchSourceBuilder);
+		final SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+		logger.info(searchResponse.toString());
+		for (final SearchHit searchHit : searchResponse.getHits()) {
+			ret.add(searchHit.getId());
+		}
+		return ret;
 	}
 }
