@@ -157,6 +157,28 @@ public class ElasticService implements Closeable {
 	}
 
 	/**
+	 * get all files in the elastic engine
+	 *
+	 * @throws IOException
+	 */
+	public List<String> getAll() throws IOException {
+		final List<String> ret = new ArrayList<String>();
+		final SearchRequest searchRequest = new SearchRequest(indexName);
+		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		searchSourceBuilder.query(QueryBuilders.matchAllQuery());
+		final String[] includeFields = new String[] { FILEDATE };
+		final String[] excludeFields = new String[] { DATA };
+		searchSourceBuilder.fetchSource(includeFields, excludeFields);
+		searchRequest.source(searchSourceBuilder);
+		final SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+		logger.info(searchResponse.toString());
+		for (final SearchHit searchHit : searchResponse.getHits()) {
+			ret.add(searchHit.getId());
+		}
+		return ret;
+	}
+
+	/**
 	 * iterate all files in the elastic engine
 	 *
 	 * @throws IOException

@@ -12,6 +12,8 @@
 				<p></p>
 				<button type="submit" class="btn btn-primary">Submit</button>
 			</form>
+			<p></p>
+			<a href="/filelist">File List</a>
 		  	</div>
 		</main>
 		<#include "footer.ftl">

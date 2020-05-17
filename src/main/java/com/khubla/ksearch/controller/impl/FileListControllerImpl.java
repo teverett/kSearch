@@ -14,32 +14,18 @@
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.khubla.ksearch.controller;
+package com.khubla.ksearch.controller.impl;
 
-import com.khubla.ksearch.controller.impl.*;
+import com.khubla.ksearch.controller.*;
+import com.khubla.ksearch.service.*;
 
-public class ControllerFactory {
-	private static ControllerFactory instance;
+import spark.*;
 
-	public static ControllerFactory getInstance() {
-		if (null == instance) {
-			instance = new ControllerFactory();
-		}
-		return instance;
-	}
-
-	private ControllerFactory() {
-	}
-
-	public DoSearchControllerImpl getDoSearchController() {
-		return new DoSearchControllerImpl();
-	}
-
-	public FileListControllerImpl getFileListController() {
-		return new FileListControllerImpl();
-	}
-
-	public IndexControllerImpl getIndexController() {
-		return new IndexControllerImpl();
+public class FileListControllerImpl extends AbstractController {
+	@Override
+	public Object renderGET(Request request, Response response) throws Exception {
+		final ElasticService elasticService = ServiceFactory.getInstance().getElasticService();
+		addAttribute("files", elasticService.getAll());
+		return renderFTL("filelist.ftl");
 	}
 }

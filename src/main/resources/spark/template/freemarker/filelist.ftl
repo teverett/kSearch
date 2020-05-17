@@ -10,15 +10,15 @@
 		    <table class="table">
 			  <thead>
 			    <tr>
-			      <th scope="col">Results for '${searchterm}'</th>
+			      <th scope="col">Indexed Files</th>
 			    </tr>
 			  </thead>
 			  <tbody>
-			      <#list results as result>
+			      <#list files as file>
 			    <tr>
-			      <td>${result}</td>
-			    </tr>	
-			  </#list>  		
+			      <td >${file}</td>
+			    </tr>			
+			      </#list>
 			  </tbody>
 			</table>
 		  	</div>
