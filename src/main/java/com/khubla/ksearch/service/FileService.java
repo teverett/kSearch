@@ -20,8 +20,14 @@ import java.io.*;
 
 import org.apache.commons.io.*;
 
+import com.khubla.ksearch.filereader.*;
+
 public class FileService {
 	public byte[] readFile(String filename) throws IOException {
 		return FileUtils.readFileToByteArray(new File(filename));
+	}
+
+	public String readFileToString(File file) throws IOException {
+		return FileReaderFactory.getReader(FilenameUtils.getExtension(file.getName())).read(file);
 	}
 }

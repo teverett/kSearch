@@ -53,7 +53,7 @@ public class FileDataSource {
 	 */
 	public static FileDataSource buildFileDataSource(File file) throws Exception {
 		final FileDataSource ret = new FileDataSource();
-		final String fileData = ServiceFactory.getInstance().getFileReaderService().readFile(file);
+		final String fileData = ServiceFactory.getInstance().getFileService().readFileToString(file);
 		ret.setData(fileData);
 		ret.setAddition_date(new Date().getTime());
 		ret.setModified_date(file.lastModified());
