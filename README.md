@@ -1,4 +1,5 @@
 [![Travis Status](https://api.travis-ci.com/teverett/kSearch.svg?branch=master)](https://travis-ci.com/teverett/kSearch.svg)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/9c804e8f75d24a2785450511e57b222c)](https://www.codacy.com/manual/teverett/kSearch?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=teverett/kSearch&amp;utm_campaign=Badge_Grade)
 
 # kSearch
 
