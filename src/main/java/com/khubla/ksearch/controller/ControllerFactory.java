@@ -16,6 +16,8 @@
  */
 package com.khubla.ksearch.controller;
 
+import com.khubla.ksearch.controller.impl.*;
+
 public class ControllerFactory {
 	private static ControllerFactory instance;
 
@@ -27,6 +29,10 @@ public class ControllerFactory {
 	}
 
 	private ControllerFactory() {
+	}
+
+	public DoSearchControllerImpl getDoSearchController() {
+		return new DoSearchControllerImpl();
 	}
 
 	public IndexControllerImpl getIndexController() {

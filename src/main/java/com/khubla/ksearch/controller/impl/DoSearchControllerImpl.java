@@ -14,13 +14,15 @@
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.khubla.ksearch.controller;
+package com.khubla.ksearch.controller.impl;
+
+import com.khubla.ksearch.controller.*;
 
 import spark.*;
 
-public class IndexControllerImpl extends AbstractController {
+public class DoSearchControllerImpl extends AbstractController {
 	@Override
 	public Object renderGET(Request request, Response response) throws Exception {
-		return renderFTL("index.ftl");
+		return renderFTL("results.ftl");
 	}
 }

@@ -14,30 +14,15 @@
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.khubla.ksearch.httpserver;
-
-import static spark.Spark.*;
+package com.khubla.ksearch.controller.impl;
 
 import com.khubla.ksearch.controller.*;
 
-import spark.servlet.*;
-import spark.template.freemarker.*;
+import spark.*;
 
-public class KSearchSparkApplication implements SparkApplication {
+public class IndexControllerImpl extends AbstractController {
 	@Override
-	public void init() {
-		staticFiles.location("/www/");
-		path("/", () -> {
-			get("/", (request, response) -> {
-				response.redirect("/index");
-				return null;
-			}, new FreeMarkerEngine());
-			get("/index", (request, response) -> {
-				return ControllerFactory.getInstance().getIndexController().renderGET(request, response);
-			});
-			get("/search", (request, response) -> {
-				return ControllerFactory.getInstance().getDoSearchController().renderGET(request, response);
-			});
-		});
+	public Object renderGET(Request request, Response response) throws Exception {
+		return renderFTL("index.ftl");
 	}
 }
