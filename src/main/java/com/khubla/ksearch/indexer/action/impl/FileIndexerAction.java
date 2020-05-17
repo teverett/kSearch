@@ -55,7 +55,8 @@ public class FileIndexerAction extends AbstractElasticAction {
 				/*
 				 * needs update?
 				 */
-				final long filedate = elasticService.filedate(file.getAbsolutePath());
+				final FileDataSource fileDataSource = elasticService.getMetadata(file.getAbsolutePath());
+				final long filedate = fileDataSource.getModified_date();
 				if (filedate < file.lastModified()) {
 					logger.info("Updating: " + file.getAbsolutePath());
 					elasticService.update(FileDataSource.buildFileDataSource(file));

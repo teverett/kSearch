@@ -124,22 +124,16 @@ public class ElasticService implements Closeable {
 	}
 
 	/**
-	 * get the file date
+	 * get a file
 	 *
-	 * @return file date
 	 * @throws IOException
 	 */
-	public long filedate(String fileAbsolutePath) throws IOException {
+	public FileDataSource get(String fileAbsolutePath) throws IOException {
 		final GetRequest getRequest = new GetRequest(indexName, fileAbsolutePath);
-		final String[] includes = new String[] { FileDataSource.MODIFIED_DATE };
-		final String[] excludes = new String[] { FileDataSource.DATA };
-		getRequest.fetchSourceContext(new FetchSourceContext(true, includes, excludes));
+		getRequest.fetchSourceContext(new FetchSourceContext(true));
 		final GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
-		final Object o = getResponse.getSource().get(FileDataSource.MODIFIED_DATE);
-		if (null != o) {
-			return (Long) o;
-		}
-		return 0;
+		final FileDataSource fileDataSource = gson.fromJson(getResponse.getSourceAsString(), FileDataSource.class);
+		return fileDataSource;
 	}
 
 	/**
@@ -164,6 +158,20 @@ public class ElasticService implements Closeable {
 			ret.add(fileData.get_source());
 		}
 		return ret;
+	}
+
+	/**
+	 * get a file's metadata
+	 *
+	 * @throws IOException
+	 */
+	public FileDataSource getMetadata(String fileAbsolutePath) throws IOException {
+		final GetRequest getRequest = new GetRequest(indexName, fileAbsolutePath);
+		final String[] excludes = new String[] { FileDataSource.DATA };
+		getRequest.fetchSourceContext(new FetchSourceContext(true, null, excludes));
+		final GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
+		final FileDataSource fileDataSource = gson.fromJson(getResponse.getSourceAsString(), FileDataSource.class);
+		return fileDataSource;
 	}
 
 	/**
