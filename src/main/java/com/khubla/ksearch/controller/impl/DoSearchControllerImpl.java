@@ -26,15 +26,11 @@ import spark.*;
 public class DoSearchControllerImpl extends AbstractController {
 	@Override
 	public Object renderGET(Request request, Response response) throws Exception {
-		String searchTerm = request.queryParams("searchterm");
-		return renderFTL("results.ftl");
-	}
-
-	public Object renderPOST(Request request, Response response) throws Exception {
-		String searchTerm = request.queryParams("searchterm");
-		ElasticService elasticService = ServiceFactory.getInstance().getElasticService();
-		List<String> results = elasticService.search(searchTerm);
-		this.addAttribute("results", results);
+		final String searchterm = request.queryParams("searchterm");
+		final ElasticService elasticService = ServiceFactory.getInstance().getElasticService();
+		final List<String> results = elasticService.search(searchterm);
+		addAttribute("results", results);
+		addAttribute("searchterm", searchterm);
 		return renderFTL("results.ftl");
 	}
 }

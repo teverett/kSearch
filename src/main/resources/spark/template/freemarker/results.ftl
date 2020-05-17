@@ -10,7 +10,7 @@
 		    <table class="table">
 			  <thead>
 			    <tr>
-			      <th scope="col">Document</th>
+			      <th scope="col">Results for '${searchterm}'</th>
 			    </tr>
 			  </thead>
 			  <tbody>

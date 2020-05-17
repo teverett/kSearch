@@ -35,8 +35,8 @@ public class KSearchSparkApplication implements SparkApplication {
 			get("/index", (request, response) -> {
 				return ControllerFactory.getInstance().getIndexController().renderGET(request, response);
 			});
-			post("/search", (request, response) -> {
-				return ControllerFactory.getInstance().getDoSearchController().renderPOST(request, response);
+			get("/search", (request, response) -> {
+				return ControllerFactory.getInstance().getDoSearchController().renderGET(request, response);
 			});
 		});
 	}

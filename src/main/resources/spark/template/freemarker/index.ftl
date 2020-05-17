@@ -7,8 +7,9 @@
 		<main role="main" class="flex-shrink-0">
 		  	<div class="container">
 		    <h1 class="mt-5">Khubla.com Search</h1>
-		    <form action="/search" method="post">
+		    <form action="/search" method="get">
 				<input class="form-control" id="searchterm" name="searchterm" aria-describedby="search">
+				<p></p>
 				<button type="submit" class="btn btn-primary">Submit</button>
 			</form>
 		  	</div>
