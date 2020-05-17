@@ -24,8 +24,12 @@ import java.util.*;
 import org.apache.http.*;
 import org.elasticsearch.action.get.*;
 import org.elasticsearch.action.index.*;
+import org.elasticsearch.action.search.*;
 import org.elasticsearch.action.update.*;
 import org.elasticsearch.client.*;
+import org.elasticsearch.index.query.*;
+import org.elasticsearch.search.*;
+import org.elasticsearch.search.builder.*;
 import org.elasticsearch.search.fetch.subphase.*;
 import org.slf4j.*;
 
@@ -138,6 +142,26 @@ public class ElasticService implements Closeable {
 			return (Long) o;
 		}
 		return 0;
+	}
+
+	/**
+	 * iterate all files in the elastic engine
+	 *
+	 * @throws IOException
+	 */
+	public void iterateAll(FileIterator fileIterator) throws IOException {
+		final SearchRequest searchRequest = new SearchRequest(indexName);
+		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		searchSourceBuilder.query(QueryBuilders.matchAllQuery());
+		final String[] includeFields = new String[] { FILEDATE };
+		final String[] excludeFields = new String[] { DATA };
+		searchSourceBuilder.fetchSource(includeFields, excludeFields);
+		searchRequest.source(searchSourceBuilder);
+		final SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+		logger.info(searchResponse.toString());
+		for (final SearchHit searchHit : searchResponse.getHits()) {
+			fileIterator.file(searchHit.getId(), (Long) searchHit.getSourceAsMap().get(FILEDATE));
+		}
 	}
 
 	/**

@@ -19,8 +19,9 @@ package com.khubla.ksearch.indexer.action.impl;
 import org.slf4j.*;
 
 import com.khubla.ksearch.indexer.action.*;
+import com.khubla.ksearch.service.*;
 
-public class IndexCleanerAction extends AbstractElasticAction {
+public class IndexCleanerAction extends AbstractElasticAction implements FileIterator {
 	/**
 	 * logger
 	 */
@@ -40,8 +41,14 @@ public class IndexCleanerAction extends AbstractElasticAction {
 	public void doAction() {
 		try {
 			logger.info("Running IndexCleanerAction");
+			elasticService.iterateAll(this);
 		} catch (final Exception e) {
 			logger.error("Exception in IndexCleanerAction", e);
 		}
+	}
+
+	@Override
+	public void file(String filename, long filedate) {
+		System.out.println(filename);
 	}
 }
