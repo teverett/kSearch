@@ -17,6 +17,7 @@
 package com.khubla.ksearch.domain;
 
 import java.io.*;
+import java.text.*;
 import java.util.*;
 
 import org.apache.commons.io.*;
@@ -28,6 +29,10 @@ public class FileDataSource {
 	 * data
 	 */
 	public static final String DATA = "data";
+	/**
+	 * date format string
+	 */
+	private static String DATE_PATTERN = "yyyy-MM-dd";
 
 	/**
 	 * create a FileData domain object from a File
@@ -84,9 +89,17 @@ public class FileDataSource {
 	 * filename
 	 */
 	private long file_size;
+	/**
+	 * date format
+	 */
+	private transient SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
 
 	public long getAddition_date() {
 		return addition_date;
+	}
+
+	public String getAdditionDateString() {
+		return simpleDateFormat.format(new Date(addition_date));
 	}
 
 	public String getData() {

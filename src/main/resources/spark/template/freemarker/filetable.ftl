@@ -13,7 +13,7 @@
 			      <td><a href="/showdoc?doc=${file.file_absolute_path}">${file.file_absolute_path}</a></td>
 			      <td>${file.file_extension}</td>
 			      <td>${file.file_size}</td>
-			      <td>${file.addition_date}</td>
+			      <td>${file.additionDateString}</td>
 			    </tr>			
 			   </#list>
 			  </tbody>
