@@ -13,7 +13,7 @@
 		<logback.version>1.2.3</logback.version>
 		<commons-cli.version>1.4</commons-cli.version>
 		<commons-io.version>2.6</commons-io.version>
-		<elastic.version>7.6.1</elastic.version>
+		<elastic.version>7.7.0</elastic.version>
 		<spark.version>2.9.1</spark.version>
 		<jetty.version>9.4.28.v20200408</jetty.version>
 	</properties>
@@ -66,12 +66,6 @@
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>apache-jsp</artifactId>
 			<version>${jetty.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
