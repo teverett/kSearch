@@ -60,13 +60,10 @@ public class Indexer implements Runnable {
 		}
 
 		/**
-		 * accept all dirs that are not hidden
+		 * accept all dirs
 		 */
 		@Override
 		public boolean accept(File dir, String name) {
-			if (false == dir.isHidden()) {
-				return true;
-			}
 			return false;
 		}
 	}
