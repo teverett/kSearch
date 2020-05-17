@@ -24,11 +24,8 @@
 		</Logger>
 		<Logger name="spark" level="debug" additivity="false">
 			<AppenderRef ref="File" />
-		</Logger>
-		<Logger name="org.apache.pdfbox" level="debug" additivity="false">
-			<AppenderRef ref="File" />
-		</Logger>
-		<Root level="trace">
+		</Logger>		
+		<Root level="FATAL">
 			<AppenderRef ref="STDOUT" />
 		</Root>
 	</Loggers>

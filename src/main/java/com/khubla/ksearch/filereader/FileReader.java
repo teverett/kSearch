@@ -19,5 +19,5 @@ package com.khubla.ksearch.filereader;
 import java.io.*;
 
 public interface FileReader {
-	String read(File file) throws IOException;
+	String read(File file) throws Exception;
 }

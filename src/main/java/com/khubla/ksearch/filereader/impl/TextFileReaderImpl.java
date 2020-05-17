@@ -31,7 +31,7 @@ public class TextFileReaderImpl implements FileReader {
 	 * @throws IOException
 	 */
 	@Override
-	public String read(File file) throws IOException {
+	public String read(File file) throws Exception {
 		return new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())), StandardCharsets.UTF_8);
 	}
 }

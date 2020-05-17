@@ -23,11 +23,11 @@ import org.apache.commons.io.*;
 import com.khubla.ksearch.filereader.*;
 
 public class FileService {
-	public byte[] readFile(String filename) throws IOException {
+	public byte[] readFile(String filename) throws Exception {
 		return FileUtils.readFileToByteArray(new File(filename));
 	}
 
-	public String readFileToString(File file) throws IOException {
+	public String readFileToString(File file) throws Exception {
 		return FileReaderFactory.getReader(FilenameUtils.getExtension(file.getName())).read(file);
 	}
 }

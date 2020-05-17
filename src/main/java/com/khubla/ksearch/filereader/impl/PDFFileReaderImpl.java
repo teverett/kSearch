@@ -18,12 +18,22 @@ package com.khubla.ksearch.filereader.impl;
 
 import java.io.*;
 
+import org.apache.logging.log4j.*;
 import org.apache.pdfbox.pdmodel.*;
 import org.apache.pdfbox.text.*;
 
 import com.khubla.ksearch.filereader.FileReader;
 
 public class PDFFileReaderImpl implements FileReader {
+	/**
+	 * logger
+	 */
+	private static final Logger logger = LogManager.getLogger(PDFFileReaderImpl.class);
+
+	public PDFFileReaderImpl() {
+		java.util.logging.Logger.getLogger("org.apache.pdfbox").setLevel(java.util.logging.Level.OFF);
+	}
+
 	/**
 	 * read file as text
 	 *
@@ -32,10 +42,18 @@ public class PDFFileReaderImpl implements FileReader {
 	 * @throws IOException
 	 */
 	@Override
-	public String read(File file) throws IOException {
-		final PDDocument pdDocument = PDDocument.load(file);
-		final String ret = new PDFTextStripper().getText(pdDocument);
-		pdDocument.close();
-		return ret;
+	public String read(File file) throws Exception {
+		PDDocument pdDocument = null;
+		try {
+			pdDocument = PDDocument.load(file);
+			return new PDFTextStripper().getText(pdDocument);
+		} catch (final Exception e) {
+			logger.error("Error parsing file " + file.getAbsolutePath(), e);
+			throw e;
+		} finally {
+			if (null != pdDocument) {
+				pdDocument.close();
+			}
+		}
 	}
 }
