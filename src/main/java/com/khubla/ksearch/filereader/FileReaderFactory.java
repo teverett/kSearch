@@ -20,7 +20,7 @@ import com.khubla.ksearch.filereader.impl.*;
 
 public class FileReaderFactory {
 	public static FileReader getReader(String extension) {
-		switch (extension) {
+		switch (extension.toLowerCase()) {
 			case "pdf":
 				return new PDFFileReaderImpl();
 			case "doc":
