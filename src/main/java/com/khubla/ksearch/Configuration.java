@@ -77,6 +77,10 @@ public class Configuration {
 	 * http port
 	 */
 	private int httpPort;
+	/**
+	 * refresh time minutes
+	 */
+	private int refresh_minutes;
 
 	/**
 	 * ctor
@@ -108,6 +112,10 @@ public class Configuration {
 		return httpPort;
 	}
 
+	public int getRefresh_minutes() {
+		return refresh_minutes;
+	}
+
 	public int getThreads() {
 		return threads;
 	}
@@ -126,6 +134,7 @@ public class Configuration {
 			elasticHost = properties.getProperty("elastic.host").trim();
 			elasticIndex = properties.getProperty("elastic.index").trim();
 			httpPort = Integer.parseInt(properties.getProperty("http.port"));
+			refresh_minutes = Integer.parseInt(properties.getProperty("refresh_minutes"));
 		} catch (final Exception e) {
 			logger.error(e.getMessage());
 			throw e;
@@ -154,6 +163,10 @@ public class Configuration {
 
 	public void setHttpPort(int httpPort) {
 		this.httpPort = httpPort;
+	}
+
+	public void setRefresh_minutes(int refresh_minutes) {
+		this.refresh_minutes = refresh_minutes;
 	}
 
 	public void setThreads(int threads) {

@@ -66,8 +66,8 @@ public class Main {
 				 * indexer
 				 */
 				System.out.println("Starting Indexer");
-				final Indexer indexer = new Indexer();
-				indexer.index(new DefaultProgressImpl());
+				final IndexScheduler indexScheduler = new IndexScheduler(new DefaultProgressImpl());
+				indexScheduler.start();
 				/*
 				 * http
 				 */

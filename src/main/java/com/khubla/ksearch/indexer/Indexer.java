@@ -27,22 +27,40 @@ import com.khubla.ksearch.*;
 import com.khubla.ksearch.indexer.action.impl.*;
 import com.khubla.ksearch.progress.*;
 
-public class Indexer {
+public class Indexer implements Runnable {
 	/**
 	 * logger
 	 */
 	private static final Logger logger = LoggerFactory.getLogger(Indexer.class);
 	/**
-	 * executor
+	 * callnback
 	 */
-	private final ExecutorService executor;
+	private final ProgressCallback progressCallback;
 
-	public Indexer() throws Exception {
-		executor = Executors.newFixedThreadPool(Configuration.getConfiguration().getThreads());
+	public Indexer(ProgressCallback progressCallback) throws Exception {
+		this.progressCallback = progressCallback;
 	}
 
-	public void index(ProgressCallback progressCallback) throws Exception {
+	private List<File> listFiles(File dir) throws Exception {
+		final List<File> ret = new ArrayList<File>();
+		if (dir.exists()) {
+			if (dir.isDirectory()) {
+				final Collection<File> files = FileUtils.listFiles(dir, Configuration.getConfiguration().getExtensions(), true);
+				if (null != files) {
+					ret.addAll(files);
+				}
+			} else {
+				ret.add(dir);
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public void run() {
 		try {
+			logger.info("Beginning Indexing");
+			final ExecutorService executor = Executors.newFixedThreadPool(Configuration.getConfiguration().getThreads());
 			/*
 			 * start the cleaner
 			 */
@@ -75,27 +93,12 @@ public class Indexer {
 					 * wait
 					 */
 					executor.shutdown();
-					executor.awaitTermination(30, TimeUnit.DAYS);
+					executor.awaitTermination(30, TimeUnit.HOURS);
 				}
 			}
+			logger.info("Completed Indexing");
 		} catch (final Exception e) {
 			logger.error(e.getMessage(), e);
-			throw e;
 		}
-	}
-
-	private List<File> listFiles(File dir) throws Exception {
-		final List<File> ret = new ArrayList<File>();
-		if (dir.exists()) {
-			if (dir.isDirectory()) {
-				final Collection<File> files = FileUtils.listFiles(dir, Configuration.getConfiguration().getExtensions(), true);
-				if (null != files) {
-					ret.addAll(files);
-				}
-			} else {
-				ret.add(dir);
-			}
-		}
-		return ret;
 	}
 }
