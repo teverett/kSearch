@@ -27,12 +27,12 @@ import org.elasticsearch.action.index.*;
 import org.elasticsearch.action.search.*;
 import org.elasticsearch.action.update.*;
 import org.elasticsearch.client.*;
-import org.elasticsearch.common.unit.*;
 import org.elasticsearch.common.xcontent.*;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.*;
 import org.elasticsearch.search.builder.*;
 import org.elasticsearch.search.fetch.subphase.*;
+import org.elasticsearch.search.sort.*;
 
 import com.google.gson.*;
 import com.khubla.ksearch.domain.*;
@@ -281,10 +281,12 @@ public class ElasticService {
 			final List<FileDataSource> ret = new ArrayList<FileDataSource>();
 			final SearchRequest searchRequest = new SearchRequest(indexName);
 			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-			final MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder(FileDataSource.DATA, searchTerm).fuzziness(Fuzziness.AUTO);
+			searchSourceBuilder.size((int) max_search_results);
+			final MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder(FileDataSource.DATA, searchTerm);
 			searchSourceBuilder.query(matchQueryBuilder);
 			final String[] excludeFields = new String[] { FileDataSource.DATA };
 			searchSourceBuilder.fetchSource(null, excludeFields);
+			searchSourceBuilder.sort(new ScoreSortBuilder().order(SortOrder.DESC));
 			searchRequest.source(searchSourceBuilder);
 			final SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
 			logger.info(searchResponse.toString());
