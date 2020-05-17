@@ -22,6 +22,7 @@ import java.nio.file.*;
 import java.util.*;
 
 import org.apache.http.*;
+import org.elasticsearch.action.delete.*;
 import org.elasticsearch.action.get.*;
 import org.elasticsearch.action.index.*;
 import org.elasticsearch.action.search.*;
@@ -110,6 +111,18 @@ public class ElasticService implements Closeable {
 		} catch (final IOException e) {
 			logger.error("Exception closeing ", e);
 		}
+	}
+
+	/**
+	 * delete a file from the elastic index
+	 *
+	 * @param filename
+	 * @throws IOException
+	 */
+	public void delete(String filename) throws IOException {
+		final DeleteRequest request = new DeleteRequest(indexName, filename);
+		final DeleteResponse deleteResponse = client.delete(request, RequestOptions.DEFAULT);
+		logger.info(deleteResponse.toString());
 	}
 
 	/**

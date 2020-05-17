@@ -14,36 +14,22 @@
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.khubla.ksearch.indexer.action;
+package com.khubla.ksearch.service;
 
-import org.slf4j.*;
+public class ServiceFactory {
+	private static ServiceFactory instance = null;
 
-import com.khubla.ksearch.service.*;
-
-public abstract class AbstractElasticAction implements Runnable {
-	/**
-	 * logger
-	 */
-	private static final Logger logger = LoggerFactory.getLogger(AbstractElasticAction.class);
-	/**
-	 * elastic
-	 */
-	protected final ElasticService elasticService;
-
-	public AbstractElasticAction() throws Exception {
-		elasticService = ServiceFactory.getInstance().getElasticService();
+	public static ServiceFactory getInstance() throws Exception {
+		if (null == instance) {
+			instance = new ServiceFactory();
+		}
+		return instance;
 	}
 
-	protected abstract void doAction();
+	private ServiceFactory() {
+	}
 
-	@Override
-	public void run() {
-		try {
-			doAction();
-		} catch (final Exception e) {
-			logger.error("Exception in run()", e);
-		} finally {
-			elasticService.close();
-		}
+	public ElasticService getElasticService() throws Exception {
+		return new ElasticService();
 	}
 }

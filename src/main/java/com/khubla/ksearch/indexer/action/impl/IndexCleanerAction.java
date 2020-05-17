@@ -16,6 +16,8 @@
  */
 package com.khubla.ksearch.indexer.action.impl;
 
+import java.io.*;
+
 import org.slf4j.*;
 
 import com.khubla.ksearch.indexer.action.*;
@@ -49,6 +51,14 @@ public class IndexCleanerAction extends AbstractElasticAction implements FileIte
 
 	@Override
 	public void file(String filename, long filedate) {
-		System.out.println(filename);
+		try {
+			final File file = new File(filename);
+			if (false == file.exists()) {
+				logger.info("Deleting: " + filename);
+				elasticService.delete(filename);
+			}
+		} catch (final Exception e) {
+			logger.error("Exception in IndexCleanerAction for: '" + filename + "'", e);
+		}
 	}
 }
