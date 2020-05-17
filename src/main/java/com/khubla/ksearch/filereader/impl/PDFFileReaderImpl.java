@@ -17,14 +17,15 @@
 package com.khubla.ksearch.filereader.impl;
 
 import java.io.*;
-import java.nio.charset.*;
-import java.nio.file.*;
+
+import org.apache.pdfbox.pdmodel.*;
+import org.apache.pdfbox.text.*;
 
 import com.khubla.ksearch.filereader.FileReader;
 
-public class TextFileReaderImpl implements FileReader {
+public class PDFFileReaderImpl implements FileReader {
 	/**
-	 * read pdf as text
+	 * read file as text
 	 *
 	 * @param file
 	 * @return file text
@@ -32,6 +33,7 @@ public class TextFileReaderImpl implements FileReader {
 	 */
 	@Override
 	public String read(File file) throws IOException {
-		return new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())), StandardCharsets.UTF_8);
+		final PDDocument pdDocument = PDDocument.load(file);
+		return new PDFTextStripper().getText(pdDocument);
 	}
 }

@@ -20,6 +20,11 @@ import com.khubla.ksearch.filereader.impl.*;
 
 public class FileReaderFactory {
 	public static FileReader getReader(String extension) {
-		return new TextFileReaderImpl();
+		switch (extension) {
+			case "pdf":
+				return new PDFFileReaderImpl();
+			default:
+				return new TextFileReaderImpl();
+		}
 	}
 }
