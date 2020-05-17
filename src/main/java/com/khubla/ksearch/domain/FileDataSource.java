@@ -59,6 +59,7 @@ public class FileDataSource {
 		ret.setModified_date(file.lastModified());
 		ret.setHidden(file.isHidden());
 		ret.setFile_extension(FilenameUtils.getExtension(file.getName()));
+		ret.setName(file.getName());
 		/*
 		 * beware, this is the PK!
 		 */
@@ -90,6 +91,18 @@ public class FileDataSource {
 	 * filename
 	 */
 	private String file_absolute_path;
+	/**
+	 * name
+	 */
+	private String name;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public long getAddition_date() {
 		return addition_date;
