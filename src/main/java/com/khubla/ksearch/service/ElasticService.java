@@ -37,23 +37,61 @@ import org.elasticsearch.search.fetch.subphase.*;
 import com.google.gson.*;
 import com.khubla.ksearch.domain.*;
 
-public class ElasticService implements Closeable {
+public class ElasticService {
+	/**
+	 * a factory for a single static REST client
+	 * <p>
+	 * https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/_changing_the_client_8217_s_initialization_code.html
+	 * </p>
+	 * <p>
+	 * "The RestHighLevelClient is thread-safe. It is typically instantiated by the application at startup time or when the first request is executed."
+	 * </p>
+	 * 
+	 * @author tom
+	 */
+	private static class RestHighLevelClientFactory {
+		/**
+		 * host
+		 */
+		protected final String elasticHost;
+		/**
+		 * port
+		 */
+		protected final int elasticPort;
+		/**
+		 * singleton
+		 */
+		private static RestHighLevelClientFactory instance = null;
+		/**
+		 * client
+		 */
+		private final RestHighLevelClient client;
+
+		private RestHighLevelClientFactory() {
+			elasticHost = com.khubla.ksearch.Configuration.getConfiguration().getElasticHost();
+			elasticPort = com.khubla.ksearch.Configuration.getConfiguration().getElasticPort();
+			/*
+			 * connect
+			 */
+			client = new RestHighLevelClient(RestClient.builder(new HttpHost(elasticHost, elasticPort, "http")));
+		}
+
+		private static RestHighLevelClientFactory getInstance() {
+			if (null == instance) {
+				instance = new RestHighLevelClientFactory();
+			}
+			return instance;
+		}
+
+		public RestHighLevelClient getRestHighLevelClient() {
+			return client;
+		}
+	}
+
 	/**
 	 * logger
 	 */
 	private static final Logger logger = LogManager.getLogger(ElasticService.class);
-	/**
-	 * client
-	 */
-	protected final RestHighLevelClient client;
-	/**
-	 * host
-	 */
-	protected final String elasticHost;
-	/**
-	 * port
-	 */
-	protected final int elasticPort;
 	/**
 	 * indexName
 	 */
@@ -78,24 +116,7 @@ public class ElasticService implements Closeable {
 		 * data
 		 */
 		indexName = com.khubla.ksearch.Configuration.getConfiguration().getElasticIndex();
-		elasticHost = com.khubla.ksearch.Configuration.getConfiguration().getElasticHost();
-		elasticPort = com.khubla.ksearch.Configuration.getConfiguration().getElasticPort();
 		max_search_results = com.khubla.ksearch.Configuration.getConfiguration().getMax_search_results();
-		/*
-		 * connect
-		 */
-		client = new RestHighLevelClient(RestClient.builder(new HttpHost(elasticHost, elasticPort, "http")));
-	}
-
-	@Override
-	public void close() {
-		try {
-			if (null != client) {
-				client.close();
-			}
-		} catch (final IOException e) {
-			logger.error("Exception closeing ", e);
-		}
 	}
 
 	/**
@@ -106,10 +127,11 @@ public class ElasticService implements Closeable {
 	 */
 	public void delete(String fileAbsolutePath) throws IOException {
 		try {
+			RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final DeleteRequest request = new DeleteRequest(indexName, fileAbsolutePath);
 			final DeleteResponse deleteResponse = client.delete(request, RequestOptions.DEFAULT);
 			logger.info(deleteResponse.toString());
-		} catch (final Exception e) {
+		} catch (final IOException e) {
 			logger.error("Error in  delete " + fileAbsolutePath, e);
 			throw e;
 		}
@@ -126,7 +148,7 @@ public class ElasticService implements Closeable {
 			for (final FileDataSource fileDataSource : filedataSources) {
 				delete(fileDataSource.getFile_absolute_path());
 			}
-		} catch (final Exception e) {
+		} catch (final IOException e) {
 			logger.error("Error in  deleteAll", e);
 			throw e;
 		}
@@ -140,11 +162,12 @@ public class ElasticService implements Closeable {
 	 */
 	public boolean exists(String fileAbsolutePath) throws IOException {
 		try {
+			RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final GetRequest getRequest = new GetRequest(indexName, fileAbsolutePath);
 			getRequest.fetchSourceContext(new FetchSourceContext(false));
 			getRequest.storedFields("_none_");
 			return client.exists(getRequest, RequestOptions.DEFAULT);
-		} catch (final Exception e) {
+		} catch (final IOException e) {
 			logger.error("Error in  exists " + fileAbsolutePath, e);
 			throw e;
 		}
@@ -157,12 +180,13 @@ public class ElasticService implements Closeable {
 	 */
 	public FileDataSource get(String fileAbsolutePath) throws IOException {
 		try {
+			RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final GetRequest getRequest = new GetRequest(indexName, fileAbsolutePath);
 			getRequest.fetchSourceContext(new FetchSourceContext(true));
 			final GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
 			final FileDataSource fileDataSource = gson.fromJson(getResponse.getSourceAsString(), FileDataSource.class);
 			return fileDataSource;
-		} catch (final Exception e) {
+		} catch (final IOException e) {
 			logger.error("Error in  get " + fileAbsolutePath, e);
 			throw e;
 		}
@@ -175,6 +199,7 @@ public class ElasticService implements Closeable {
 	 */
 	public List<FileDataSource> getAll() throws IOException {
 		try {
+			RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final List<FileDataSource> ret = new ArrayList<FileDataSource>();
 			final SearchRequest searchRequest = new SearchRequest(indexName);
 			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -191,7 +216,7 @@ public class ElasticService implements Closeable {
 				ret.add(fileData.get_source());
 			}
 			return ret;
-		} catch (final Exception e) {
+		} catch (final IOException e) {
 			logger.error("Error in getAll", e);
 			throw e;
 		}
@@ -204,13 +229,14 @@ public class ElasticService implements Closeable {
 	 */
 	public FileDataSource getMetadata(String fileAbsolutePath) throws IOException {
 		try {
+			RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final GetRequest getRequest = new GetRequest(indexName, fileAbsolutePath);
 			final String[] excludes = new String[] { FileDataSource.DATA };
 			getRequest.fetchSourceContext(new FetchSourceContext(true, null, excludes));
 			final GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
 			final FileDataSource fileDataSource = gson.fromJson(getResponse.getSourceAsString(), FileDataSource.class);
 			return fileDataSource;
-		} catch (final Exception e) {
+		} catch (final IOException e) {
 			logger.error("Error in  getMetadata " + fileAbsolutePath, e);
 			throw e;
 		}
@@ -223,6 +249,7 @@ public class ElasticService implements Closeable {
 	 */
 	public void iterateAll(FileIterator fileIterator) throws IOException {
 		try {
+			RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final SearchRequest searchRequest = new SearchRequest(indexName);
 			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 			searchSourceBuilder.size((int) max_search_results);
@@ -237,7 +264,7 @@ public class ElasticService implements Closeable {
 				final FileData fileData = gson.fromJson(json, FileData.class);
 				fileIterator.file(fileData.get_source());
 			}
-		} catch (final Exception e) {
+		} catch (final IOException e) {
 			logger.error("Error in iterateAll", e);
 			throw e;
 		}
@@ -250,6 +277,7 @@ public class ElasticService implements Closeable {
 	 */
 	public List<FileDataSource> search(String searchTerm) throws IOException {
 		try {
+			RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final List<FileDataSource> ret = new ArrayList<FileDataSource>();
 			final SearchRequest searchRequest = new SearchRequest(indexName);
 			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -266,7 +294,7 @@ public class ElasticService implements Closeable {
 				ret.add(fileData.get_source());
 			}
 			return ret;
-		} catch (final Exception e) {
+		} catch (final IOException e) {
 			logger.error("Error searching " + searchTerm, e);
 			throw e;
 		}
@@ -279,6 +307,7 @@ public class ElasticService implements Closeable {
 	 */
 	public void update(FileDataSource fileDataSource) throws Exception {
 		try {
+			RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			/*
 			 * file data
 			 */
@@ -290,7 +319,7 @@ public class ElasticService implements Closeable {
 			updateRequest.doc(json, XContentType.JSON);
 			final UpdateResponse updateResponse = client.update(updateRequest, RequestOptions.DEFAULT);
 			logger.info(updateResponse.toString());
-		} catch (final Exception e) {
+		} catch (final IOException e) {
 			logger.error("Error updating " + fileDataSource.getFile_absolute_path(), e);
 			throw e;
 		}
@@ -303,6 +332,7 @@ public class ElasticService implements Closeable {
 	 */
 	public void write(FileDataSource fileDataSource) throws Exception {
 		try {
+			RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			/*
 			 * file data
 			 */
@@ -315,7 +345,7 @@ public class ElasticService implements Closeable {
 			request.source(json, XContentType.JSON);
 			final IndexResponse indexResponse = client.index(request, RequestOptions.DEFAULT);
 			logger.info(indexResponse.toString());
-		} catch (final Exception e) {
+		} catch (final IOException e) {
 			logger.error("Error writing " + fileDataSource.getFile_absolute_path(), e);
 			throw e;
 		}

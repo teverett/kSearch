@@ -42,8 +42,6 @@ public abstract class AbstractElasticAction implements Runnable {
 			doAction();
 		} catch (final Exception e) {
 			logger.error("Exception in run()", e);
-		} finally {
-			elasticService.close();
 		}
 	}
 }

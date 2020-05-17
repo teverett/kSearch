@@ -41,10 +41,14 @@ public class Configuration {
 	 * @throws IOException
 	 * @throws FileNotFoundException
 	 */
-	public static Configuration getConfiguration() throws Exception {
+	public static Configuration getConfiguration() {
 		if (null == instance) {
 			instance = new Configuration();
-			instance.load(propertiesFile);
+			try {
+				instance.load(propertiesFile);
+			} catch (Exception e) {
+				logger.error(e);
+			}
 		}
 		return instance;
 	}
