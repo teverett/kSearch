@@ -42,4 +42,8 @@ public class ControllerFactory {
 	public IndexControllerImpl getIndexController() {
 		return new IndexControllerImpl();
 	}
+
+	public ShowDocControllerImpl getShowDocController() {
+		return new ShowDocControllerImpl();
+	}
 }

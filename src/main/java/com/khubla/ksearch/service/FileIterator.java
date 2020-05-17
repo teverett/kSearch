@@ -16,6 +16,8 @@
  */
 package com.khubla.ksearch.service;
 
+import com.khubla.ksearch.domain.*;
+
 public interface FileIterator {
-	void file(String filename, long filedate);
+	void file(FileDataSource fileDataSource);
 }

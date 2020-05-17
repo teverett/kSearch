@@ -28,28 +28,20 @@ import org.elasticsearch.action.search.*;
 import org.elasticsearch.action.update.*;
 import org.elasticsearch.client.*;
 import org.elasticsearch.common.unit.*;
+import org.elasticsearch.common.xcontent.*;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.*;
 import org.elasticsearch.search.builder.*;
 import org.elasticsearch.search.fetch.subphase.*;
+
+import com.google.gson.*;
+import com.khubla.ksearch.domain.*;
 
 public class ElasticService implements Closeable {
 	/**
 	 * logger
 	 */
 	private static final Logger logger = LogManager.getLogger(ElasticService.class);
-	/**
-	 * filedate
-	 */
-	private static final String FILEDATE = "filedate";
-	/**
-	 * data
-	 */
-	private static final String DATA = "data";
-	/**
-	 * date
-	 */
-	private static final String DATE = "date";
 	/**
 	 * client
 	 */
@@ -66,6 +58,14 @@ public class ElasticService implements Closeable {
 	 * indexName
 	 */
 	protected final String indexName;
+	/**
+	 * max search results
+	 */
+	private final long max_search_results;
+	/**
+	 * GSON
+	 */
+	private final Gson gson = new Gson();
 
 	/**
 	 * ctor
@@ -80,25 +80,11 @@ public class ElasticService implements Closeable {
 		indexName = com.khubla.ksearch.Configuration.getConfiguration().getElasticIndex();
 		elasticHost = com.khubla.ksearch.Configuration.getConfiguration().getElasticHost();
 		elasticPort = com.khubla.ksearch.Configuration.getConfiguration().getElasticPort();
+		max_search_results = com.khubla.ksearch.Configuration.getConfiguration().getMax_search_results();
 		/*
 		 * connect
 		 */
 		client = new RestHighLevelClient(RestClient.builder(new HttpHost(elasticHost, elasticPort, "http")));
-	}
-
-	/**
-	 * build the JSON payload for elastic
-	 *
-	 * @return
-	 * @throws Exception
-	 */
-	private Map<String, Object> buildFileMap(File file) throws Exception {
-		final String fileData = ServiceFactory.getInstance().getFileReaderService().readFile(file);
-		final Map<String, Object> jsonMap = new HashMap<>();
-		jsonMap.put(DATA, fileData);
-		jsonMap.put(DATE, new Date());
-		jsonMap.put(FILEDATE, file.lastModified());
-		return jsonMap;
 	}
 
 	@Override
@@ -118,8 +104,8 @@ public class ElasticService implements Closeable {
 	 * @param filename
 	 * @throws IOException
 	 */
-	public void delete(String filename) throws IOException {
-		final DeleteRequest request = new DeleteRequest(indexName, filename);
+	public void delete(String fileAbsolutePath) throws IOException {
+		final DeleteRequest request = new DeleteRequest(indexName, fileAbsolutePath);
 		final DeleteResponse deleteResponse = client.delete(request, RequestOptions.DEFAULT);
 		logger.info(deleteResponse.toString());
 	}
@@ -130,8 +116,8 @@ public class ElasticService implements Closeable {
 	 * @return exists
 	 * @throws IOException
 	 */
-	public boolean exists(File file) throws IOException {
-		final GetRequest getRequest = new GetRequest(indexName, file.getAbsolutePath());
+	public boolean exists(String fileAbsolutePath) throws IOException {
+		final GetRequest getRequest = new GetRequest(indexName, fileAbsolutePath);
 		getRequest.fetchSourceContext(new FetchSourceContext(false));
 		getRequest.storedFields("_none_");
 		return client.exists(getRequest, RequestOptions.DEFAULT);
@@ -143,13 +129,13 @@ public class ElasticService implements Closeable {
 	 * @return file date
 	 * @throws IOException
 	 */
-	public long filedate(File file) throws IOException {
-		final GetRequest getRequest = new GetRequest(indexName, file.getAbsolutePath());
-		final String[] includes = new String[] { FILEDATE };
-		final String[] excludes = new String[] { DATA };
+	public long filedate(String fileAbsolutePath) throws IOException {
+		final GetRequest getRequest = new GetRequest(indexName, fileAbsolutePath);
+		final String[] includes = new String[] { FileDataSource.MODIFIED_DATE };
+		final String[] excludes = new String[] { FileDataSource.DATA };
 		getRequest.fetchSourceContext(new FetchSourceContext(true, includes, excludes));
 		final GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
-		final Object o = getResponse.getSource().get(FILEDATE);
+		final Object o = getResponse.getSource().get(FileDataSource.MODIFIED_DATE);
 		if (null != o) {
 			return (Long) o;
 		}
@@ -161,19 +147,21 @@ public class ElasticService implements Closeable {
 	 *
 	 * @throws IOException
 	 */
-	public List<String> getAll() throws IOException {
-		final List<String> ret = new ArrayList<String>();
+	public List<FileDataSource> getAll() throws IOException {
+		final List<FileDataSource> ret = new ArrayList<FileDataSource>();
 		final SearchRequest searchRequest = new SearchRequest(indexName);
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		searchSourceBuilder.size((int) max_search_results);
 		searchSourceBuilder.query(QueryBuilders.matchAllQuery());
-		final String[] includeFields = new String[] { FILEDATE };
-		final String[] excludeFields = new String[] { DATA };
-		searchSourceBuilder.fetchSource(includeFields, excludeFields);
+		final String[] excludeFields = new String[] { FileDataSource.DATA };
+		searchSourceBuilder.fetchSource(null, excludeFields);
 		searchRequest.source(searchSourceBuilder);
 		final SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
 		logger.info(searchResponse.toString());
 		for (final SearchHit searchHit : searchResponse.getHits()) {
-			ret.add(searchHit.getId());
+			final String json = searchHit.toString();
+			final FileData fileData = gson.fromJson(json, FileData.class);
+			ret.add(fileData.get_source());
 		}
 		return ret;
 	}
@@ -186,15 +174,17 @@ public class ElasticService implements Closeable {
 	public void iterateAll(FileIterator fileIterator) throws IOException {
 		final SearchRequest searchRequest = new SearchRequest(indexName);
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		searchSourceBuilder.size((int) max_search_results);
 		searchSourceBuilder.query(QueryBuilders.matchAllQuery());
-		final String[] includeFields = new String[] { FILEDATE };
-		final String[] excludeFields = new String[] { DATA };
-		searchSourceBuilder.fetchSource(includeFields, excludeFields);
+		final String[] excludeFields = new String[] { FileDataSource.DATA };
+		searchSourceBuilder.fetchSource(null, excludeFields);
 		searchRequest.source(searchSourceBuilder);
 		final SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
 		logger.info(searchResponse.toString());
 		for (final SearchHit searchHit : searchResponse.getHits()) {
-			fileIterator.file(searchHit.getId(), (Long) searchHit.getSourceAsMap().get(FILEDATE));
+			final String json = searchHit.toString();
+			final FileData fileData = gson.fromJson(json, FileData.class);
+			fileIterator.file(fileData.get_source());
 		}
 	}
 
@@ -203,20 +193,21 @@ public class ElasticService implements Closeable {
 	 *
 	 * @throws IOException
 	 */
-	public List<String> search(String searchTerm) throws IOException {
-		final List<String> ret = new ArrayList<String>();
+	public List<FileDataSource> search(String searchTerm) throws IOException {
+		final List<FileDataSource> ret = new ArrayList<FileDataSource>();
 		final SearchRequest searchRequest = new SearchRequest(indexName);
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		final MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder(DATA, searchTerm).fuzziness(Fuzziness.AUTO);
+		final MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder(FileDataSource.DATA, searchTerm).fuzziness(Fuzziness.AUTO);
 		searchSourceBuilder.query(matchQueryBuilder);
-		final String[] includeFields = new String[] { FILEDATE };
-		final String[] excludeFields = new String[] { DATA };
-		searchSourceBuilder.fetchSource(includeFields, excludeFields);
+		final String[] excludeFields = new String[] { FileDataSource.DATA };
+		searchSourceBuilder.fetchSource(null, excludeFields);
 		searchRequest.source(searchSourceBuilder);
 		final SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
 		logger.info(searchResponse.toString());
 		for (final SearchHit searchHit : searchResponse.getHits()) {
-			ret.add(searchHit.getId());
+			final String json = searchHit.toString();
+			final FileData fileData = gson.fromJson(json, FileData.class);
+			ret.add(fileData.get_source());
 		}
 		return ret;
 	}
@@ -226,16 +217,16 @@ public class ElasticService implements Closeable {
 	 *
 	 * @throws Exception
 	 */
-	public void update(File file) throws Exception {
+	public void update(FileDataSource fileDataSource) throws Exception {
 		/*
-		 * file map
+		 * file data
 		 */
-		final Map<String, Object> jsonMap = buildFileMap(file);
+		final String json = gson.toJson(fileDataSource);
 		/*
 		 * update
 		 */
-		final UpdateRequest updateRequest = new UpdateRequest(indexName, file.getAbsolutePath());
-		updateRequest.doc(jsonMap);
+		final UpdateRequest updateRequest = new UpdateRequest(indexName, fileDataSource.getFile_absolute_path());
+		updateRequest.doc(json, XContentType.JSON);
 		final UpdateResponse updateResponse = client.update(updateRequest, RequestOptions.DEFAULT);
 		logger.info(updateResponse.toString());
 	}
@@ -245,17 +236,17 @@ public class ElasticService implements Closeable {
 	 *
 	 * @throws Exception
 	 */
-	public void write(File file) throws Exception {
+	public void write(FileDataSource fileDataSource) throws Exception {
 		/*
-		 * file map
+		 * file data
 		 */
-		final Map<String, Object> jsonMap = buildFileMap(file);
+		final String json = gson.toJson(fileDataSource);
 		/*
 		 * index
 		 */
 		final IndexRequest request = new IndexRequest(indexName);
-		request.id(file.getAbsolutePath());
-		request.source(jsonMap);
+		request.id(fileDataSource.getFile_absolute_path());
+		request.source(json, XContentType.JSON);
 		final IndexResponse indexResponse = client.index(request, RequestOptions.DEFAULT);
 		logger.info(indexResponse.toString());
 	}

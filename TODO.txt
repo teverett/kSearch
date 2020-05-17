@@ -1,0 +1,17 @@
+add admin page
+	show index
+	rebuild all
+compact the search results table
+Save file extension
+Save create date
+
+results should show
+	doc file extension 
+	last seen 
+	created
+
+Get all should use callback and paging  
+Iterate should page
+Recursive file find should be part of index func
+
+Index office docs

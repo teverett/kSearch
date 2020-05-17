@@ -41,6 +41,9 @@ public class KSearchSparkApplication implements SparkApplication {
 			get("/filelist", (request, response) -> {
 				return ControllerFactory.getInstance().getFileListController().renderGET(request, response);
 			});
+			get("/showdoc", (request, response) -> {
+				return ControllerFactory.getInstance().getShowDocController().renderGET(request, response);
+			});
 		});
 	}
 }

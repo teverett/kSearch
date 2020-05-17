@@ -20,6 +20,7 @@ import java.io.*;
 
 import org.apache.logging.log4j.*;
 
+import com.khubla.ksearch.domain.*;
 import com.khubla.ksearch.indexer.action.*;
 
 public class FileIndexerAction extends AbstractElasticAction {
@@ -50,20 +51,20 @@ public class FileIndexerAction extends AbstractElasticAction {
 			/*
 			 * exists?
 			 */
-			if (elasticService.exists(file)) {
+			if (elasticService.exists(file.getAbsolutePath())) {
 				/*
 				 * needs update?
 				 */
-				final long filedate = elasticService.filedate(file);
+				final long filedate = elasticService.filedate(file.getAbsolutePath());
 				if (filedate < file.lastModified()) {
 					logger.info("Updating: " + file.getAbsolutePath());
-					elasticService.update(file);
+					elasticService.update(FileDataSource.buildFileDataSource(file));
 				} else {
 					logger.info("Skipped: " + file.getAbsolutePath());
 				}
 			} else {
 				logger.info("Writing: " + file.getAbsolutePath());
-				elasticService.write(file);
+				elasticService.write(FileDataSource.buildFileDataSource(file));
 			}
 		} catch (final Exception e) {
 			logger.error("Exception indexing '" + file.getAbsolutePath() + "'", e);

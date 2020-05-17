@@ -16,7 +16,7 @@
 			  <tbody>
 			      <#list files as file>
 			    <tr>
-			      <td >${file}</td>
+			      <td><a href="/showdoc?doc=${file.file_absolute_path}">${file.file_absolute_path}</a></td>
 			    </tr>			
 			      </#list>
 			  </tbody>

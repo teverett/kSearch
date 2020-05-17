@@ -16,7 +16,7 @@
 			  <tbody>
 			      <#list results as result>
 			    <tr>
-			      <td>${result}</td>
+			      <td><a href="/showdoc?doc=${result.file_absolute_path}">${result.file_absolute_path}</a></td>
 			    </tr>	
 			  </#list>  		
 			  </tbody>

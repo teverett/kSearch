@@ -14,28 +14,19 @@
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.khubla.ksearch.filereader.impl;
+package com.khubla.ksearch.controller.impl;
 
-import java.io.*;
+import com.khubla.ksearch.controller.*;
+import com.khubla.ksearch.service.*;
 
-import org.apache.pdfbox.pdmodel.*;
-import org.apache.pdfbox.text.*;
+import spark.*;
 
-import com.khubla.ksearch.filereader.FileReader;
-
-public class PDFFileReaderImpl implements FileReader {
-	/**
-	 * read file as text
-	 *
-	 * @param file
-	 * @return file text
-	 * @throws IOException
-	 */
+public class ShowDocControllerImpl extends AbstractController {
 	@Override
-	public String read(File file) throws IOException {
-		final PDDocument pdDocument = PDDocument.load(file);
-		final String ret = new PDFTextStripper().getText(pdDocument);
-		pdDocument.close();
-		return ret;
+	public Object renderGET(Request request, Response response) throws Exception {
+		final String docname = request.queryParams("doc");
+		final FileService fileService = ServiceFactory.getInstance().getFileService();
+		final byte[] data = fileService.readFile(docname);
+		return data;
 	}
 }

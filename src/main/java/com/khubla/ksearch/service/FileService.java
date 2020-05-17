@@ -14,28 +14,14 @@
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.khubla.ksearch.filereader.impl;
+package com.khubla.ksearch.service;
 
 import java.io.*;
 
-import org.apache.pdfbox.pdmodel.*;
-import org.apache.pdfbox.text.*;
+import org.apache.commons.io.*;
 
-import com.khubla.ksearch.filereader.FileReader;
-
-public class PDFFileReaderImpl implements FileReader {
-	/**
-	 * read file as text
-	 *
-	 * @param file
-	 * @return file text
-	 * @throws IOException
-	 */
-	@Override
-	public String read(File file) throws IOException {
-		final PDDocument pdDocument = PDDocument.load(file);
-		final String ret = new PDFTextStripper().getText(pdDocument);
-		pdDocument.close();
-		return ret;
+public class FileService {
+	public byte[] readFile(String filename) throws IOException {
+		return FileUtils.readFileToByteArray(new File(filename));
 	}
 }

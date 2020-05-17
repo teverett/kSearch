@@ -19,6 +19,7 @@ package com.khubla.ksearch.controller.impl;
 import java.util.*;
 
 import com.khubla.ksearch.controller.*;
+import com.khubla.ksearch.domain.*;
 import com.khubla.ksearch.service.*;
 
 import spark.*;
@@ -28,7 +29,7 @@ public class DoSearchControllerImpl extends AbstractController {
 	public Object renderGET(Request request, Response response) throws Exception {
 		final String searchterm = request.queryParams("searchterm");
 		final ElasticService elasticService = ServiceFactory.getInstance().getElasticService();
-		final List<String> results = elasticService.search(searchterm);
+		final List<FileDataSource> results = elasticService.search(searchterm);
 		addAttribute("results", results);
 		addAttribute("searchterm", searchterm);
 		return renderFTL("results.ftl");

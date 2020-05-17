@@ -20,6 +20,7 @@ import java.io.*;
 
 import org.apache.logging.log4j.*;
 
+import com.khubla.ksearch.domain.*;
 import com.khubla.ksearch.indexer.action.*;
 import com.khubla.ksearch.service.*;
 
@@ -50,15 +51,16 @@ public class IndexCleanerAction extends AbstractElasticAction implements FileIte
 	}
 
 	@Override
-	public void file(String filename, long filedate) {
+	public void file(FileDataSource fileDataSource) {
 		try {
-			final File file = new File(filename);
+			final String fn = fileDataSource.getFile_absolute_path();
+			final File file = new File(fn);
 			if (false == file.exists()) {
-				logger.info("Deleting: " + filename);
-				elasticService.delete(filename);
+				logger.info("Deleting: " + fn);
+				elasticService.delete(fn);
 			}
 		} catch (final Exception e) {
-			logger.error("Exception in IndexCleanerAction for: '" + filename + "'", e);
+			logger.error("Exception in IndexCleanerAction for: '" + fileDataSource.getFile_absolute_path() + "'", e);
 		}
 	}
 }

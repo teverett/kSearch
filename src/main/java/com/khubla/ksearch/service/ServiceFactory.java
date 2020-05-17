@@ -36,4 +36,8 @@ public class ServiceFactory {
 	public FileReaderService getFileReaderService() throws Exception {
 		return new FileReaderService();
 	}
+
+	public FileService getFileService() throws Exception {
+		return new FileService();
+	}
 }
