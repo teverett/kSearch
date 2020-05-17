@@ -30,7 +30,7 @@ public class DoSearchControllerImpl extends AbstractController {
 		final String searchterm = request.queryParams("searchterm");
 		final ElasticService elasticService = ServiceFactory.getInstance().getElasticService();
 		final List<FileDataSource> results = elasticService.search(searchterm);
-		addAttribute("results", results);
+		addAttribute("files", results);
 		addAttribute("searchterm", searchterm);
 		return renderFTL("results.ftl");
 	}
