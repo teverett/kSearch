@@ -8,4 +8,6 @@ A simple local search engine built on [ElasticSearch](https://www.elastic.co/)
 
 * Text
 * PDF
+* DOC
+* DOCX
 

@@ -23,6 +23,10 @@ public class FileReaderFactory {
 		switch (extension) {
 			case "pdf":
 				return new PDFFileReaderImpl();
+			case "doc":
+				return new DocFileReaderImpl();
+			case "docx":
+				return new DocxFileReaderImpl();
 			default:
 				return new TextFileReaderImpl();
 		}
