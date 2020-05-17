@@ -46,7 +46,8 @@ public class PDFFileReaderImpl implements FileReader {
 		PDDocument pdDocument = null;
 		try {
 			pdDocument = PDDocument.load(file);
-			return new PDFTextStripper().getText(pdDocument);
+			final PDFTextStripper pdfTextStripper = new PDFTextStripper();
+			return pdfTextStripper.getText(pdDocument);
 		} catch (final Exception e) {
 			logger.error("Error parsing file " + file.getAbsolutePath(), e);
 			throw e;

@@ -31,7 +31,7 @@ public class FileIndexerAction extends AbstractElasticAction {
 	/**
 	 * File
 	 */
-	private final File file;
+	private final String filePath;
 
 	/**
 	 * ctor
@@ -39,36 +39,40 @@ public class FileIndexerAction extends AbstractElasticAction {
 	 * @param file
 	 * @throws Exception
 	 */
-	public FileIndexerAction(File file) throws Exception {
+	public FileIndexerAction(String filePath) throws Exception {
 		super();
-		this.file = file;
+		this.filePath = filePath;
 	}
 
 	@Override
 	public void doAction() {
 		try {
-			logger.info("Indexing: " + file.getAbsolutePath());
+			logger.info("Indexing: " + filePath);
 			/*
 			 * exists?
 			 */
-			if (elasticService.exists(file.getAbsolutePath())) {
+			if (elasticService.exists(filePath)) {
 				/*
 				 * needs update?
 				 */
-				final FileDataSource fileDataSource = elasticService.getMetadata(file.getAbsolutePath());
+				final FileDataSource fileDataSource = elasticService.getMetadata(filePath);
 				final long filedate = fileDataSource.getModified_date();
-				if (filedate < file.lastModified()) {
-					logger.info("Updating: " + file.getAbsolutePath());
-					elasticService.update(FileDataSource.buildFileDataSource(file));
+				if (filedate < lastModified()) {
+					logger.info("Updating: " + filePath);
+					elasticService.update(FileDataSource.buildFileDataSource(filePath));
 				} else {
-					logger.info("Skipped: " + file.getAbsolutePath());
+					logger.info("Skipped: " + filePath);
 				}
 			} else {
-				logger.info("Writing: " + file.getAbsolutePath());
-				elasticService.write(FileDataSource.buildFileDataSource(file));
+				logger.info("Writing: " + filePath);
+				elasticService.write(FileDataSource.buildFileDataSource(filePath));
 			}
 		} catch (final Exception e) {
-			logger.error("Exception indexing '" + file.getAbsolutePath() + "'", e);
+			logger.error("Exception indexing '" + filePath + "'", e);
 		}
+	}
+
+	private long lastModified() {
+		return new File(filePath).lastModified();
 	}
 }

@@ -40,8 +40,9 @@ public class FileDataSource {
 	 * @return FileData object
 	 * @throws Exception
 	 */
-	public static FileDataSource buildFileDataSource(File file) throws Exception {
+	public static FileDataSource buildFileDataSource(String filePath) throws Exception {
 		final FileDataSource ret = new FileDataSource();
+		final File file = new File(filePath);
 		final String fileData = ServiceFactory.getInstance().getFileService().readFileToString(file);
 		ret.setData(fileData);
 		ret.setAddition_date(new Date().getTime());

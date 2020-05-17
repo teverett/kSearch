@@ -40,8 +40,10 @@ public class DocFileReaderImpl implements FileReader {
 	@Override
 	public String read(File file) throws Exception {
 		WordExtractor extractor = null;
+		FileInputStream fileInputStream = null;
 		try {
-			final HWPFDocument doc = new HWPFDocument(new FileInputStream(file));
+			fileInputStream = new FileInputStream(file);
+			final HWPFDocument doc = new HWPFDocument(fileInputStream);
 			extractor = new WordExtractor(doc);
 			return extractor.getText();
 		} catch (final Exception e) {
@@ -50,6 +52,9 @@ public class DocFileReaderImpl implements FileReader {
 		} finally {
 			if (null != extractor) {
 				extractor.close();
+			}
+			if (null != fileInputStream) {
+				fileInputStream.close();
 			}
 		}
 	}

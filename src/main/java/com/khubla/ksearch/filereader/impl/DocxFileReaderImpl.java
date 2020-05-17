@@ -39,8 +39,10 @@ public class DocxFileReaderImpl implements FileReader {
 	@Override
 	public String read(File file) throws Exception {
 		POIXMLTextExtractor extractor = null;
+		FileInputStream fileInputStream = null;
 		try {
-			extractor = (POIXMLTextExtractor) ExtractorFactory.createExtractor(new FileInputStream(file));
+			fileInputStream = new FileInputStream(file);
+			extractor = (POIXMLTextExtractor) ExtractorFactory.createExtractor(fileInputStream);
 			return extractor.getText();
 		} catch (final Exception e) {
 			logger.error("Error parsing file " + file.getAbsolutePath(), e);
@@ -48,6 +50,9 @@ public class DocxFileReaderImpl implements FileReader {
 		} finally {
 			if (null != extractor) {
 				extractor.close();
+			}
+			if (null != fileInputStream) {
+				fileInputStream.close();
 			}
 		}
 	}

@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 import org.apache.commons.io.*;
+import org.apache.commons.io.filefilter.*;
 import org.apache.logging.log4j.*;
 
 import com.khubla.ksearch.*;
@@ -28,6 +29,48 @@ import com.khubla.ksearch.indexer.action.impl.*;
 import com.khubla.ksearch.progress.*;
 
 public class Indexer implements Runnable {
+	/**
+	 * custom IOFileFilter
+	 *
+	 * @author tom
+	 */
+	private static class IndexerFilter implements IOFileFilter {
+		/**
+		 * logger
+		 */
+		private static final Logger logger = LogManager.getLogger(IndexerFilter.class);
+
+		@Override
+		public boolean accept(File file) {
+			try {
+				final String[] extensions = com.khubla.ksearch.Configuration.getConfiguration().getExtensions();
+				final String extension = FilenameUtils.getExtension(file.getName());
+				if (null != extension) {
+					for (final String e : extensions) {
+						if (e.toLowerCase().compareTo(extension.toLowerCase()) == 0) {
+							return true;
+						}
+					}
+				}
+				return false;
+			} catch (final Exception e) {
+				logger.error(e.getMessage(), e);
+				return false;
+			}
+		}
+
+		/**
+		 * accept all dirs that are not hidden
+		 */
+		@Override
+		public boolean accept(File dir, String name) {
+			if (false == dir.isHidden()) {
+				return true;
+			}
+			return false;
+		}
+	}
+
 	/**
 	 * logger
 	 */
@@ -41,16 +84,25 @@ public class Indexer implements Runnable {
 		this.progressCallback = progressCallback;
 	}
 
-	private List<File> listFiles(File dir) throws Exception {
-		final List<File> ret = new ArrayList<File>();
+	/**
+	 * get list of files in directory
+	 *
+	 * @param dir
+	 * @return list of files
+	 * @throws Exception
+	 */
+	private List<String> listFiles(File dir) throws Exception {
+		final List<String> ret = new ArrayList<String>();
 		if (dir.exists()) {
 			if (dir.isDirectory()) {
-				final Collection<File> files = FileUtils.listFiles(dir, Configuration.getConfiguration().getExtensions(), true);
+				final Collection<File> files = FileUtils.listFiles(dir, new IndexerFilter(), new IndexerFilter());
 				if (null != files) {
-					ret.addAll(files);
+					for (final File f : files) {
+						ret.add(f.getAbsolutePath());
+					}
 				}
 			} else {
-				ret.add(dir);
+				ret.add(dir.getAbsolutePath());
 			}
 		}
 		return ret;
@@ -78,15 +130,15 @@ public class Indexer implements Runnable {
 					if (null != progressCallback) {
 						progressCallback.status("Finding files in " + dir.getPath());
 					}
-					final List<File> files = listFiles(dir);
+					final List<String> files = listFiles(dir);
 					if (null != progressCallback) {
 						progressCallback.status("Found '" + files.size() + "'  files in " + dir.getPath());
 					}
 					/*
 					 * walk the files
 					 */
-					for (final File file : files) {
-						final FileIndexerAction fileIndexer = new FileIndexerAction(file);
+					for (final String filePath : files) {
+						final FileIndexerAction fileIndexer = new FileIndexerAction(filePath);
 						executor.submit(fileIndexer);
 					}
 					/*
