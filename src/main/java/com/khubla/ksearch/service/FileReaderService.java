@@ -18,8 +18,12 @@ package com.khubla.ksearch.service;
 
 import java.io.*;
 
+import org.apache.commons.io.*;
+
+import com.khubla.ksearch.filereader.*;
+
 public class FileReaderService {
 	public String readFile(File file) throws IOException {
-		return null;
+		return FileReaderFactory.getReader(FilenameUtils.getExtension(file.getName())).read(file);
 	}
 }
