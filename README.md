@@ -1,4 +1,4 @@
-
+[![Travis Status](https://api.travis-ci.com/teverett/kSearch.svg?branch=master)](https://travis-ci.com/teverett/kSearch.svg)
 
 # kSearch
 
