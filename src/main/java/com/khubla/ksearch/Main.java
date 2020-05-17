@@ -19,8 +19,7 @@ package com.khubla.ksearch;
 import org.apache.commons.cli.*;
 
 import com.khubla.ksearch.httpserver.*;
-import com.khubla.ksearch.indexer.*;
-import com.khubla.ksearch.progress.impl.*;
+import com.khubla.ksearch.service.*;
 
 /**
  * @author tom
@@ -66,8 +65,7 @@ public class Main {
 				 * indexer
 				 */
 				System.out.println("Starting Indexer");
-				final IndexScheduler indexScheduler = new IndexScheduler(new DefaultProgressImpl());
-				indexScheduler.start();
+				ServiceFactory.getInstance().getIndexService().startIndexerScheduler();
 				/*
 				 * http
 				 */

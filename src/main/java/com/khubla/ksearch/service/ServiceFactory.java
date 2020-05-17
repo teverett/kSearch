@@ -36,4 +36,8 @@ public class ServiceFactory {
 	public FileService getFileService() throws Exception {
 		return new FileService();
 	}
+
+	public IndexService getIndexService() throws Exception {
+		return new IndexService();
+	}
 }

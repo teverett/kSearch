@@ -111,6 +111,18 @@ public class ElasticService implements Closeable {
 	}
 
 	/**
+	 * delete all file data
+	 *
+	 * @throws Exception
+	 */
+	public void deleteAll() throws Exception {
+		final List<FileDataSource> filedataSources = getAll();
+		for (final FileDataSource fileDataSource : filedataSources) {
+			delete(fileDataSource.getFile_absolute_path());
+		}
+	}
+
+	/**
 	 * check if file exists
 	 *
 	 * @return exists

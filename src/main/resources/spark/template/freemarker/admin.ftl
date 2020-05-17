@@ -7,11 +7,10 @@
 		<#include "menu.ftl">
 		<main role="main" class="flex-shrink-0">
 		  	<div class="container">
-		    <form action="/search" method="get">
-				<input class="form-control" id="searchterm" name="searchterm" aria-describedby="search">
-				<p></p>
-				<button type="submit" class="btn btn-primary">Submit</button>
-			</form>
+		  		<ul>
+				<li><a href="/filelist">File List</a></li>
+				<li><a href="/reindex">Reindex</a></li>
+				</ul>
 		  	</div>
 		</main>
 		<#include "footer.ftl">

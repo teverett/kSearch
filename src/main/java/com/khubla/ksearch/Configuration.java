@@ -85,6 +85,10 @@ public class Configuration {
 	 * max searxh results
 	 */
 	private long max_search_results;
+	/**
+	 * orgname
+	 */
+	private String orgname;
 
 	/**
 	 * ctor
@@ -120,6 +124,10 @@ public class Configuration {
 		return max_search_results;
 	}
 
+	public String getOrgname() {
+		return orgname;
+	}
+
 	public int getRefresh_minutes() {
 		return refresh_minutes;
 	}
@@ -144,6 +152,7 @@ public class Configuration {
 			httpPort = Integer.parseInt(properties.getProperty("http.port"));
 			refresh_minutes = Integer.parseInt(properties.getProperty("refresh_minutes"));
 			max_search_results = Long.parseLong(properties.getProperty("elastic.max_search_results"));
+			orgname = properties.getProperty("orgname").trim();
 		} catch (final Exception e) {
 			logger.error(e.getMessage());
 			throw e;
@@ -176,6 +185,10 @@ public class Configuration {
 
 	public void setMax_search_results(long max_search_results) {
 		this.max_search_results = max_search_results;
+	}
+
+	public void setOrgname(String orgname) {
+		this.orgname = orgname;
 	}
 
 	public void setRefresh_minutes(int refresh_minutes) {

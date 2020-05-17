@@ -28,22 +28,6 @@ public class FileDataSource {
 	 * data
 	 */
 	public static final String DATA = "data";
-	/**
-	 * modified date
-	 */
-	public static final String MODIFIED_DATE = "modified_date";
-	/**
-	 * file is hidden?
-	 */
-	public static final String HIDDEN = "hidden";
-	/**
-	 * date added to index
-	 */
-	public static final String ADDITION_DATE = "addition_date";
-	/**
-	 * file extension
-	 */
-	public static final String FILE_EXTENSION = "file_extension";
 
 	/**
 	 * create a FileData domain object from a File
@@ -60,6 +44,7 @@ public class FileDataSource {
 		ret.setHidden(file.isHidden());
 		ret.setFile_extension(FilenameUtils.getExtension(file.getName()));
 		ret.setName(file.getName());
+		ret.setFile_size(file.length());
 		/*
 		 * beware, this is the PK!
 		 */
@@ -95,6 +80,10 @@ public class FileDataSource {
 	 * name
 	 */
 	private String name;
+	/**
+	 * filename
+	 */
+	private long file_size;
 
 	public long getAddition_date() {
 		return addition_date;
@@ -110,6 +99,10 @@ public class FileDataSource {
 
 	public String getFile_extension() {
 		return file_extension;
+	}
+
+	public long getFile_size() {
+		return file_size;
 	}
 
 	public long getModified_date() {
@@ -138,6 +131,10 @@ public class FileDataSource {
 
 	public void setFile_extension(String file_extension) {
 		this.file_extension = file_extension;
+	}
+
+	public void setFile_size(long file_size) {
+		this.file_size = file_size;
 	}
 
 	public void setHidden(boolean hidden) {

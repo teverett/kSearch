@@ -31,6 +31,10 @@ public class ControllerFactory {
 	private ControllerFactory() {
 	}
 
+	public AdminControllerImpl getAdminController() {
+		return new AdminControllerImpl();
+	}
+
 	public DoSearchControllerImpl getDoSearchController() {
 		return new DoSearchControllerImpl();
 	}
@@ -41,6 +45,10 @@ public class ControllerFactory {
 
 	public IndexControllerImpl getIndexController() {
 		return new IndexControllerImpl();
+	}
+
+	public ReindexControllerImpl getReindexController() {
+		return new ReindexControllerImpl();
 	}
 
 	public ShowDocControllerImpl getShowDocController() {

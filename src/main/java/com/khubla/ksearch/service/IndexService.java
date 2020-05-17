@@ -14,25 +14,18 @@
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.khubla.ksearch.controller;
+package com.khubla.ksearch.service;
 
-import java.util.*;
+import com.khubla.ksearch.indexer.*;
+import com.khubla.ksearch.progress.impl.*;
 
-import spark.*;
-import spark.template.freemarker.*;
-
-public abstract class AbstractController implements Controller {
-	/**
-	 * attributes
-	 */
-	private final Map<String, Object> attributes = new HashMap<>();
-
-	protected void addAttribute(String key, Object value) {
-		attributes.put(key, value);
+public class IndexService {
+	public void runIndexer() throws Exception {
+		new Thread(new Indexer(null)).run();
 	}
 
-	protected Object renderFTL(String ftl) throws Exception {
-		addAttribute("orgname", com.khubla.ksearch.Configuration.getConfiguration().getOrgname());
-		return new FreeMarkerEngine().render(new ModelAndView(attributes, ftl));
+	public void startIndexerScheduler() throws Exception {
+		final IndexScheduler indexScheduler = new IndexScheduler(new DefaultProgressImpl());
+		indexScheduler.start();
 	}
 }

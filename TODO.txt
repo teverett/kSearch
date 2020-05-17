@@ -13,3 +13,9 @@ Iterate should page
 Recursive file find should be part of index func
 
 Index office docs
+
+rtf support
+
+fix the  slf4j error
+
+figure out the exception throws in pdfbox
