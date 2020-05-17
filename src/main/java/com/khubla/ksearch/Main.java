@@ -18,6 +18,7 @@ package com.khubla.ksearch;
 
 import org.apache.commons.cli.*;
 
+import com.khubla.ksearch.httpserver.*;
 import com.khubla.ksearch.indexer.*;
 import com.khubla.ksearch.progress.impl.*;
 
@@ -62,10 +63,18 @@ public class Main {
 				 */
 				Configuration.propertiesFile = configFilename;
 				/*
-				 * index
+				 * indexer
 				 */
+				System.out.println("Starting Indexer");
 				final Indexer indexer = new Indexer();
 				indexer.index(new DefaultProgressImpl());
+				/*
+				 * http
+				 */
+				System.out.println("Starting HTTP server on port: " + Configuration.getConfiguration().getHttpPort());
+				final WWWServer wwwServer = new WWWServer(Configuration.getConfiguration().getHttpPort());
+				wwwServer.start();
+				wwwServer.join();
 			} else {
 				throw new Exception("File was not supplied");
 			}

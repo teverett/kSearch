@@ -73,6 +73,10 @@ public class Configuration {
 	 * elastic index
 	 */
 	private String elasticIndex;
+	/**
+	 * http port
+	 */
+	private int httpPort;
 
 	/**
 	 * ctor
@@ -100,6 +104,10 @@ public class Configuration {
 		return extensions;
 	}
 
+	public int getHttpPort() {
+		return httpPort;
+	}
+
 	public int getThreads() {
 		return threads;
 	}
@@ -117,6 +125,7 @@ public class Configuration {
 			elasticPort = Integer.parseInt(properties.getProperty("elastic.port"));
 			elasticHost = properties.getProperty("elastic.host").trim();
 			elasticIndex = properties.getProperty("elastic.index").trim();
+			httpPort = Integer.parseInt(properties.getProperty("http.port"));
 		} catch (final Exception e) {
 			logger.error(e.getMessage());
 			throw e;
@@ -141,6 +150,10 @@ public class Configuration {
 
 	public void setExtensions(String[] extensions) {
 		this.extensions = extensions;
+	}
+
+	public void setHttpPort(int httpPort) {
+		this.httpPort = httpPort;
 	}
 
 	public void setThreads(int threads) {
