@@ -21,7 +21,7 @@ import com.khubla.ksearch.progress.impl.*;
 
 public class IndexService {
 	public void runIndexer() throws Exception {
-		new Thread(new Indexer(null)).run();
+		new Thread(new Indexer(null)).start();
 	}
 
 	public void startIndexerScheduler() throws Exception {

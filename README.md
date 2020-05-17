@@ -11,10 +11,10 @@ kSearch is under the [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)
 
 ## Supported file types
 
-* Text
-* PDF
-* DOC
-* DOCX
+*   Text
+*   PDF
+*   DOC
+*   DOCX
 
 ## Configuring
 
@@ -24,9 +24,9 @@ The configuration for kSearch is via a properties file `ksearch.properties`.  Th
 
 To build kSearch you will need:
 
-* [Java8](https://adoptopenjdk.net/) or better
-* [Maven 3.1.1](https://maven.apache.org/) or better
-* A working install of [Elastic Search](http://https://www.elastic.co/).
+*   [Java8](https://adoptopenjdk.net/) or better
+*   [Maven 3.1.1](https://maven.apache.org/) or better
+*   A working install of [Elastic Search](http://https://www.elastic.co/).
 
 To build kSearch
 
@@ -35,6 +35,5 @@ mvn clean package
 </pre>
 
 ## Running
-
 To run kSearch, simply run `run.sh` which will run the binary jar and use `ksearch.properties` as the configuration file.
 
