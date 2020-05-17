@@ -44,16 +44,20 @@ public class Indexer implements Runnable {
 		public boolean accept(File file) {
 			try {
 				System.out.println("File " + file.getAbsolutePath());
-				final String[] extensions = com.khubla.ksearch.Configuration.getConfiguration().getExtensions();
-				final String extension = FilenameUtils.getExtension(file.getName());
-				if (null != extension) {
-					for (final String e : extensions) {
-						if (e.toLowerCase().compareTo(extension.toLowerCase()) == 0) {
-							return true;
+				if (false == file.isDirectory()) {
+					final String[] extensions = com.khubla.ksearch.Configuration.getConfiguration().getExtensions();
+					final String extension = FilenameUtils.getExtension(file.getName());
+					if (null != extension) {
+						for (final String e : extensions) {
+							if (e.toLowerCase().compareTo(extension.toLowerCase()) == 0) {
+								return true;
+							}
 						}
 					}
+					return false;
+				} else {
+					return true;
 				}
-				return false;
 			} catch (final Exception e) {
 				logger.error(e.getMessage(), e);
 				return false;
