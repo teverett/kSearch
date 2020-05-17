@@ -43,6 +43,7 @@ public class Indexer implements Runnable {
 		@Override
 		public boolean accept(File file) {
 			try {
+				System.out.println("File " + file.getAbsolutePath());
 				final String[] extensions = com.khubla.ksearch.Configuration.getConfiguration().getExtensions();
 				final String extension = FilenameUtils.getExtension(file.getName());
 				if (null != extension) {
@@ -64,7 +65,7 @@ public class Indexer implements Runnable {
 		 */
 		@Override
 		public boolean accept(File dir, String name) {
-			return false;
+			return true;
 		}
 	}
 
