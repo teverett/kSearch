@@ -17,8 +17,6 @@
 package com.khubla.ksearch.service;
 
 import java.io.*;
-import java.nio.charset.*;
-import java.nio.file.*;
 import java.util.*;
 
 import org.apache.http.*;
@@ -92,10 +90,10 @@ public class ElasticService implements Closeable {
 	 * build the JSON payload for elastic
 	 *
 	 * @return
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	private Map<String, Object> buildFileMap(File file) throws IOException {
-		final String fileData = readFile(file);
+	private Map<String, Object> buildFileMap(File file) throws Exception {
+		final String fileData = ServiceFactory.getInstance().getFileReaderService().readFile(file);
 		final Map<String, Object> jsonMap = new HashMap<>();
 		jsonMap.put(DATA, fileData);
 		jsonMap.put(DATE, new Date());
@@ -179,17 +177,6 @@ public class ElasticService implements Closeable {
 	}
 
 	/**
-	 * read file as text
-	 *
-	 * @param file
-	 * @return file text
-	 * @throws IOException
-	 */
-	private String readFile(File file) throws IOException {
-		return new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())), StandardCharsets.UTF_8);
-	}
-
-	/**
 	 * search
 	 *
 	 * @throws IOException
@@ -215,9 +202,9 @@ public class ElasticService implements Closeable {
 	/**
 	 * update file data
 	 *
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public void update(File file) throws IOException {
+	public void update(File file) throws Exception {
 		/*
 		 * file map
 		 */
@@ -234,9 +221,9 @@ public class ElasticService implements Closeable {
 	/**
 	 * write file data
 	 *
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public void write(File file) throws IOException {
+	public void write(File file) throws Exception {
 		/*
 		 * file map
 		 */

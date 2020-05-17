@@ -16,24 +16,10 @@
  */
 package com.khubla.ksearch.service;
 
-public class ServiceFactory {
-	private static ServiceFactory instance = null;
+import java.io.*;
 
-	public static ServiceFactory getInstance() throws Exception {
-		if (null == instance) {
-			instance = new ServiceFactory();
-		}
-		return instance;
-	}
-
-	private ServiceFactory() {
-	}
-
-	public ElasticService getElasticService() throws Exception {
-		return new ElasticService();
-	}
-
-	public FileReaderService getFileReaderService() throws Exception {
-		return new FileReaderService();
+public class FileReaderService {
+	public String readFile(File file) throws IOException {
+		return null;
 	}
 }

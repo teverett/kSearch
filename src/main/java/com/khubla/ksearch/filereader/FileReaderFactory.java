@@ -14,26 +14,12 @@
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.khubla.ksearch.service;
+package com.khubla.ksearch.filereader;
 
-public class ServiceFactory {
-	private static ServiceFactory instance = null;
+import com.khubla.ksearch.filereader.impl.*;
 
-	public static ServiceFactory getInstance() throws Exception {
-		if (null == instance) {
-			instance = new ServiceFactory();
-		}
-		return instance;
-	}
-
-	private ServiceFactory() {
-	}
-
-	public ElasticService getElasticService() throws Exception {
-		return new ElasticService();
-	}
-
-	public FileReaderService getFileReaderService() throws Exception {
-		return new FileReaderService();
+public class FileReaderFactory {
+	public static FileReader getReader(String extension) {
+		return new TextFileReaderImpl();
 	}
 }
