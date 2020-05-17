@@ -54,8 +54,25 @@ public class IndexCleanerAction extends AbstractElasticAction implements FileIte
 	public void file(FileDataSource fileDataSource) {
 		try {
 			final String fn = fileDataSource.getFile_absolute_path();
+			/*
+			 * if file is no longer on filesystem, remove it
+			 */
 			final File file = new File(fn);
 			if (false == file.exists()) {
+				logger.info("Deleting: " + fn);
+				elasticService.delete(fn);
+			}
+			/*
+			 * if file is not on a path we index, then maybe we changed the index paths, we need to remove the file from elastic
+			 */
+			boolean foundPath = false;
+			for (final String path : com.khubla.ksearch.Configuration.getConfiguration().getDirs()) {
+				if (fn.startsWith(path)) {
+					foundPath = true;
+					break;
+				}
+			}
+			if (foundPath == false) {
 				logger.info("Deleting: " + fn);
 				elasticService.delete(fn);
 			}
