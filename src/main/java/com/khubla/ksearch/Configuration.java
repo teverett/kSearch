@@ -46,7 +46,7 @@ public class Configuration {
 			instance = new Configuration();
 			try {
 				instance.load(propertiesFile);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				logger.error(e);
 			}
 		}
@@ -93,6 +93,10 @@ public class Configuration {
 	 * orgname
 	 */
 	private String orgname;
+	/**
+	 * page size
+	 */
+	private int page_size;
 
 	/**
 	 * ctor
@@ -132,6 +136,10 @@ public class Configuration {
 		return orgname;
 	}
 
+	public int getPage_size() {
+		return page_size;
+	}
+
 	public int getRefresh_minutes() {
 		return refresh_minutes;
 	}
@@ -157,6 +165,7 @@ public class Configuration {
 			refresh_minutes = Integer.parseInt(properties.getProperty("refresh_minutes"));
 			max_search_results = Long.parseLong(properties.getProperty("elastic.max_search_results"));
 			orgname = properties.getProperty("orgname").trim();
+			page_size = Integer.parseInt(properties.getProperty("page_size"));
 		} catch (final Exception e) {
 			logger.error(e.getMessage());
 			throw e;
@@ -193,6 +202,10 @@ public class Configuration {
 
 	public void setOrgname(String orgname) {
 		this.orgname = orgname;
+	}
+
+	public void setPage_size(int page_size) {
+		this.page_size = page_size;
 	}
 
 	public void setRefresh_minutes(int refresh_minutes) {

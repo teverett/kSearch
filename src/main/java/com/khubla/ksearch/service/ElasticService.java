@@ -46,10 +46,22 @@ public class ElasticService {
 	 * <p>
 	 * "The RestHighLevelClient is thread-safe. It is typically instantiated by the application at startup time or when the first request is executed."
 	 * </p>
-	 * 
+	 *
 	 * @author tom
 	 */
 	private static class RestHighLevelClientFactory {
+		/**
+		 * singleton
+		 */
+		private static RestHighLevelClientFactory instance = null;
+
+		private static RestHighLevelClientFactory getInstance() {
+			if (null == instance) {
+				instance = new RestHighLevelClientFactory();
+			}
+			return instance;
+		}
+
 		/**
 		 * host
 		 */
@@ -58,10 +70,6 @@ public class ElasticService {
 		 * port
 		 */
 		protected final int elasticPort;
-		/**
-		 * singleton
-		 */
-		private static RestHighLevelClientFactory instance = null;
 		/**
 		 * client
 		 */
@@ -74,13 +82,6 @@ public class ElasticService {
 			 * connect
 			 */
 			client = new RestHighLevelClient(RestClient.builder(new HttpHost(elasticHost, elasticPort, "http")));
-		}
-
-		private static RestHighLevelClientFactory getInstance() {
-			if (null == instance) {
-				instance = new RestHighLevelClientFactory();
-			}
-			return instance;
 		}
 
 		public RestHighLevelClient getRestHighLevelClient() {
@@ -127,7 +128,7 @@ public class ElasticService {
 	 */
 	public void delete(String fileAbsolutePath) throws IOException {
 		try {
-			RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
+			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final DeleteRequest request = new DeleteRequest(indexName, fileAbsolutePath);
 			final DeleteResponse deleteResponse = client.delete(request, RequestOptions.DEFAULT);
 			logger.info(deleteResponse.toString());
@@ -162,7 +163,7 @@ public class ElasticService {
 	 */
 	public boolean exists(String fileAbsolutePath) throws IOException {
 		try {
-			RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
+			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final GetRequest getRequest = new GetRequest(indexName, fileAbsolutePath);
 			getRequest.fetchSourceContext(new FetchSourceContext(false));
 			getRequest.storedFields("_none_");
@@ -180,7 +181,7 @@ public class ElasticService {
 	 */
 	public FileDataSource get(String fileAbsolutePath) throws IOException {
 		try {
-			RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
+			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final GetRequest getRequest = new GetRequest(indexName, fileAbsolutePath);
 			getRequest.fetchSourceContext(new FetchSourceContext(true));
 			final GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
@@ -199,7 +200,7 @@ public class ElasticService {
 	 */
 	public List<FileDataSource> getAll() throws IOException {
 		try {
-			RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
+			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final List<FileDataSource> ret = new ArrayList<FileDataSource>();
 			final SearchRequest searchRequest = new SearchRequest(indexName);
 			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -229,7 +230,7 @@ public class ElasticService {
 	 */
 	public FileDataSource getMetadata(String fileAbsolutePath) throws IOException {
 		try {
-			RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
+			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final GetRequest getRequest = new GetRequest(indexName, fileAbsolutePath);
 			final String[] excludes = new String[] { FileDataSource.DATA };
 			getRequest.fetchSourceContext(new FetchSourceContext(true, null, excludes));
@@ -249,7 +250,7 @@ public class ElasticService {
 	 */
 	public void iterateAll(FileIterator fileIterator) throws IOException {
 		try {
-			RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
+			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final SearchRequest searchRequest = new SearchRequest(indexName);
 			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 			searchSourceBuilder.size((int) max_search_results);
@@ -277,7 +278,7 @@ public class ElasticService {
 	 */
 	public List<FileDataSource> search(String searchTerm) throws IOException {
 		try {
-			RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
+			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final List<FileDataSource> ret = new ArrayList<FileDataSource>();
 			final SearchRequest searchRequest = new SearchRequest(indexName);
 			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -309,7 +310,7 @@ public class ElasticService {
 	 */
 	public void update(FileDataSource fileDataSource) throws Exception {
 		try {
-			RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
+			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			/*
 			 * file data
 			 */
@@ -334,7 +335,7 @@ public class ElasticService {
 	 */
 	public void write(FileDataSource fileDataSource) throws Exception {
 		try {
-			RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
+			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			/*
 			 * file data
 			 */
