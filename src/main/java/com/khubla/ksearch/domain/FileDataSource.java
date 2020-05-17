@@ -96,14 +96,6 @@ public class FileDataSource {
 	 */
 	private String name;
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public long getAddition_date() {
 		return addition_date;
 	}
@@ -122,6 +114,10 @@ public class FileDataSource {
 
 	public long getModified_date() {
 		return modified_date;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public boolean isHidden() {
@@ -150,5 +146,9 @@ public class FileDataSource {
 
 	public void setModified_date(long modified_date) {
 		this.modified_date = modified_date;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }
