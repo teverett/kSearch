@@ -3,7 +3,7 @@
 
 # kSearch
 
-A simple local search engine built on [ElasticSearch](https://www.elastic.co/)
+A simple local search engine built on [ElasticSearch](https://www.elastic.co/).  kSearch includes a threaded file system indexer which recursively reads files and indexes them into Elastic.  There is also an automatic updater which deletes files from Elastic which have been deleted from the filesystem.  The automatic updater also reindexes files which have changed on the file system since they were last indexed into Elastic.
 
 ## License
 
@@ -11,10 +11,10 @@ kSearch is under the [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)
 
 ## Supported file types
 
-*   Text
-*   PDF
-*   DOC
-*   DOCX
+*   Text files including txt,java,c,cpp,sh,pdf,js,json,css,xml,yaml,yml,log,eml,msg,md,htm,html,doc,docx
+*   pdf
+*   doxc
+*   docx
 
 ## Configuring
 
