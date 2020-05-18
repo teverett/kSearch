@@ -32,6 +32,9 @@ public abstract class AbstractController implements Controller {
 	}
 
 	protected Object renderFTL(String ftl) throws Exception {
+		/*
+		 * org name
+		 */
 		addAttribute("orgname", com.khubla.ksearch.Configuration.getConfiguration().getOrgname());
 		return new FreeMarkerEngine().render(new ModelAndView(attributes, ftl));
 	}

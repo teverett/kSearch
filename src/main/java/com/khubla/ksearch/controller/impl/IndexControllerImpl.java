@@ -17,12 +17,20 @@
 package com.khubla.ksearch.controller.impl;
 
 import com.khubla.ksearch.controller.*;
+import com.khubla.ksearch.service.*;
 
 import spark.*;
 
 public class IndexControllerImpl extends AbstractController {
 	@Override
 	public Object renderGET(Request request, Response response) throws Exception {
+		/*
+		 * total documents
+		 */
+		addAttribute("documentcount", ServiceFactory.getInstance().getElasticService().getDocumentCount());
+		/*
+		 * done
+		 */
 		return renderFTL("index.ftl");
 	}
 }

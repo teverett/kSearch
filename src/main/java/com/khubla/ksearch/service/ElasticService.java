@@ -27,6 +27,7 @@ import org.elasticsearch.action.index.*;
 import org.elasticsearch.action.search.*;
 import org.elasticsearch.action.update.*;
 import org.elasticsearch.client.*;
+import org.elasticsearch.client.core.*;
 import org.elasticsearch.common.xcontent.*;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.*;
@@ -224,6 +225,29 @@ public class ElasticService {
 			return ret;
 		} catch (final IOException e) {
 			logger.error("Error in getAll", e);
+			throw e;
+		}
+	}
+
+	/**
+	 * total count of documents
+	 *
+	 * @throws IOException
+	 */
+	public long getDocumentCount() throws IOException {
+		try {
+			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
+			final CountRequest countRequest = new CountRequest(indexName);
+			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+			searchSourceBuilder.query(QueryBuilders.matchAllQuery());
+			final String[] excludeFields = new String[] { FileDataSource.DATA };
+			searchSourceBuilder.fetchSource(null, excludeFields);
+			countRequest.source(searchSourceBuilder);
+			final CountResponse countResponse = client.count(countRequest, RequestOptions.DEFAULT);
+			logger.info(countResponse.toString());
+			return countResponse.getCount();
+		} catch (final IOException e) {
+			logger.error("Error in getDocumentCount", e);
 			throw e;
 		}
 	}
