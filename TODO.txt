@@ -2,8 +2,6 @@
 results should show
 	created
 
-Get all should use callback and paging  
-Iterate should page
 Recursive file find should be part of index func
 
 rtf support
