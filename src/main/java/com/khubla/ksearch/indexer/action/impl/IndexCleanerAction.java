@@ -21,14 +21,24 @@ import java.util.*;
 
 import org.apache.logging.log4j.*;
 
+import com.khubla.ksearch.SearchConfiguration.*;
 import com.khubla.ksearch.domain.*;
 import com.khubla.ksearch.indexer.action.*;
 
+/**
+ * clean the index for a specific SearchIndex
+ *
+ * @author tom
+ */
 public class IndexCleanerAction extends AbstractElasticAction {
 	/**
 	 * logger
 	 */
 	private static final Logger logger = LogManager.getLogger(IndexCleanerAction.class);
+	/**
+	 * search index
+	 */
+	private final SearchIndex searchIndex;
 
 	/**
 	 * ctor
@@ -36,33 +46,43 @@ public class IndexCleanerAction extends AbstractElasticAction {
 	 * @param file
 	 * @throws Exception
 	 */
-	public IndexCleanerAction() throws Exception {
+	public IndexCleanerAction(SearchIndex searchIndex) throws Exception {
 		super();
+		this.searchIndex = searchIndex;
 	}
 
 	@Override
 	public void doAction() {
 		try {
-			logger.info("Running IndexCleanerAction");
-			/*
-			 * pages of 100
-			 */
-			final int pagesize = 100;
-			int idx = 0;
-			List<FileDataSource> filedataSources = null;
-			do {
-				filedataSources = elasticService.getAll(idx, pagesize);
-				idx += filedataSources.size();
-				for (final FileDataSource fileDataSource : filedataSources) {
-					process(fileDataSource);
-				}
-			} while (filedataSources.size() == pagesize);
+			logger.info("Cleannig index " + searchIndex.getName());
+			try {
+				/*
+				 * pages of 100
+				 */
+				final int pagesize = 100;
+				int idx = 0;
+				List<FileDataSource> filedataSources = null;
+				do {
+					filedataSources = elasticService.getAll(searchIndex.getElasticIndexName(), idx, pagesize);
+					idx += filedataSources.size();
+					for (final FileDataSource fileDataSource : filedataSources) {
+						processFile(fileDataSource);
+					}
+				} while (filedataSources.size() == pagesize);
+			} catch (final Exception e) {
+				logger.error("Exception in processIndex", e);
+			}
 		} catch (final Exception e) {
 			logger.error("Exception in IndexCleanerAction", e);
 		}
 	}
 
-	private void process(FileDataSource fileDataSource) {
+	/**
+	 * process a file
+	 *
+	 * @param fileDataSource
+	 */
+	private void processFile(FileDataSource fileDataSource) {
 		try {
 			final String fn = fileDataSource.getFile_absolute_path();
 			/*
@@ -71,13 +91,13 @@ public class IndexCleanerAction extends AbstractElasticAction {
 			final File file = new File(fn);
 			if (false == file.exists()) {
 				logger.info("Deleting: " + fn);
-				elasticService.delete(fn);
+				elasticService.delete(searchIndex.getElasticIndexName(), fn);
 			}
 			/*
 			 * if file is not on a path we index, then maybe we changed the index paths, we need to remove the file from elastic
 			 */
 			boolean foundPath = false;
-			for (final String path : com.khubla.ksearch.Configuration.getConfiguration().getDirs()) {
+			for (final String path : searchIndex.getDirs()) {
 				if (fn.startsWith(path)) {
 					foundPath = true;
 					break;
@@ -85,7 +105,7 @@ public class IndexCleanerAction extends AbstractElasticAction {
 			}
 			if (foundPath == false) {
 				logger.info("Deleting: " + fn);
-				elasticService.delete(fn);
+				elasticService.delete(searchIndex.getElasticIndexName(), fn);
 			}
 		} catch (final Exception e) {
 			logger.error("Exception in IndexCleanerAction for: '" + fileDataSource.getFile_absolute_path() + "'", e);

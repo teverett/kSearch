@@ -7,8 +7,9 @@
 		<#include "menu.ftl">
 		<main role="main" class="flex-shrink-0">
 		  	<div class="container">
-		  	<h4>Total documents: ${documentcount}</h4>
+		  	<h4>Search ${documentcount} documents in ${indexName}</h4>
 		    <form action="/search" method="get">
+		    	<input type="hidden" id="indexName" name="indexName" value="${indexName}">
 				<input class="form-control" id="searchterm" name="searchterm" aria-describedby="search">
 				<p></p>
 				<button type="submit" class="btn btn-primary">Submit</button>

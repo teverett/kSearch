@@ -60,7 +60,7 @@ public class Main {
 				/*
 				 * set the name
 				 */
-				Configuration.propertiesFile = configFilename;
+				SearchConfiguration.propertiesFile = configFilename;
 				/*
 				 * indexer
 				 */
@@ -69,8 +69,8 @@ public class Main {
 				/*
 				 * http
 				 */
-				System.out.println("Starting HTTP server on port: " + Configuration.getConfiguration().getHttpPort());
-				final WWWServer wwwServer = new WWWServer(Configuration.getConfiguration().getHttpPort());
+				System.out.println("Starting HTTP server on port: " + SearchConfiguration.getInstance().getHttpPort());
+				final WWWServer wwwServer = new WWWServer(SearchConfiguration.getInstance().getHttpPort());
 				wwwServer.start();
 				wwwServer.join();
 			} else {

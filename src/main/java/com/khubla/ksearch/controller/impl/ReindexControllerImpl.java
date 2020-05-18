@@ -16,18 +16,52 @@
  */
 package com.khubla.ksearch.controller.impl;
 
+import org.apache.logging.log4j.*;
+
+import com.khubla.ksearch.*;
+import com.khubla.ksearch.SearchConfiguration.*;
 import com.khubla.ksearch.controller.*;
 import com.khubla.ksearch.service.*;
 
 import spark.*;
 
 public class ReindexControllerImpl extends AbstractController {
+	public static class HackyThread extends Thread {
+		/**
+		 * logger
+		 */
+		private static final Logger logger = LogManager.getLogger(HackyThread.class);
+		private final String indexName;
+
+		public HackyThread(String indexName) {
+			super();
+			this.indexName = indexName;
+		}
+
+		@Override
+		public void run() {
+			try {
+				final SearchIndex searchIndex = SearchConfiguration.getInstance().getIndices().get(indexName);
+				if (null != searchIndex) {
+					final ElasticService elasticService = ServiceFactory.getInstance().getElasticService();
+					elasticService.deleteAll(indexName);
+					final IndexService indexService = ServiceFactory.getInstance().getIndexService();
+					indexService.runIndexer(searchIndex);
+				}
+			} catch (final Exception e) {
+				logger.error("Error in HackyThread", e);
+			}
+		}
+	}
+
 	@Override
 	public Object renderGET(Request request, Response response) throws Exception {
-		final ElasticService elasticService = ServiceFactory.getInstance().getElasticService();
-		elasticService.deleteAll();
-		final IndexService indexService = ServiceFactory.getInstance().getIndexService();
-		indexService.runIndexer();
-		return renderFTL("index.ftl");
+		final String indexName = getIndexName(request);
+		/*
+		 * spin a thread to do that....
+		 */
+		new Thread(new HackyThread(indexName)).start();
+		response.redirect("/index");
+		return null;
 	}
 }

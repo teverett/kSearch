@@ -25,9 +25,15 @@ import org.apache.commons.io.filefilter.*;
 import org.apache.logging.log4j.*;
 
 import com.khubla.ksearch.*;
+import com.khubla.ksearch.SearchConfiguration.*;
 import com.khubla.ksearch.indexer.action.impl.*;
 import com.khubla.ksearch.progress.*;
 
+/**
+ * index and clean a specific SearchIndex
+ *
+ * @author tom
+ */
 public class Indexer implements Runnable {
 	/**
 	 * custom IOFileFilter
@@ -39,12 +45,21 @@ public class Indexer implements Runnable {
 		 * logger
 		 */
 		private static final Logger logger = LogManager.getLogger(IndexerFilter.class);
+		/**
+		 * search index
+		 */
+		private final SearchIndex searchIndex;
+
+		public IndexerFilter(SearchIndex searchIndex) {
+			super();
+			this.searchIndex = searchIndex;
+		}
 
 		@Override
 		public boolean accept(File file) {
 			try {
 				if (false == file.isDirectory()) {
-					final String[] extensions = com.khubla.ksearch.Configuration.getConfiguration().getExtensions();
+					final String[] extensions = searchIndex.getExtensions();
 					final String extension = FilenameUtils.getExtension(file.getName());
 					if (null != extension) {
 						for (final String e : extensions) {
@@ -78,12 +93,17 @@ public class Indexer implements Runnable {
 	 */
 	private static final Logger logger = LogManager.getLogger(Indexer.class);
 	/**
-	 * callnback
+	 * callback
 	 */
 	private final ProgressCallback progressCallback;
+	/**
+	 * search index
+	 */
+	private final SearchIndex searchIndex;
 
-	public Indexer(ProgressCallback progressCallback) throws Exception {
+	public Indexer(SearchIndex searchIndex, ProgressCallback progressCallback) throws Exception {
 		this.progressCallback = progressCallback;
+		this.searchIndex = searchIndex;
 	}
 
 	/**
@@ -97,7 +117,7 @@ public class Indexer implements Runnable {
 		final List<String> ret = new ArrayList<String>();
 		if (dir.exists()) {
 			if (dir.isDirectory()) {
-				final Collection<File> files = FileUtils.listFiles(dir, new IndexerFilter(), new IndexerFilter());
+				final Collection<File> files = FileUtils.listFiles(dir, new IndexerFilter(searchIndex), new IndexerFilter(searchIndex));
 				if (null != files) {
 					for (final File f : files) {
 						ret.add(f.getAbsolutePath());
@@ -114,15 +134,15 @@ public class Indexer implements Runnable {
 	public void run() {
 		try {
 			logger.info("Beginning Indexing");
-			final ExecutorService executor = Executors.newFixedThreadPool(Configuration.getConfiguration().getThreads());
+			final ExecutorService executor = Executors.newFixedThreadPool(SearchConfiguration.getInstance().getThreads());
 			/*
 			 * start the cleaner
 			 */
-			executor.submit(new IndexCleanerAction());
+			executor.submit(new IndexCleanerAction(searchIndex));
 			/*
 			 * walk the files
 			 */
-			final String[] dirNames = Configuration.getConfiguration().getDirs();
+			final String[] dirNames = searchIndex.getDirs();
 			for (final String dirName : dirNames) {
 				final File dir = new File(dirName);
 				if (dir.exists()) {
@@ -140,7 +160,7 @@ public class Indexer implements Runnable {
 					 * walk the files
 					 */
 					for (final String filePath : files) {
-						final FileIndexerAction fileIndexer = new FileIndexerAction(filePath);
+						final FileIndexerAction fileIndexer = new FileIndexerAction(searchIndex, filePath);
 						executor.submit(fileIndexer);
 					}
 					/*

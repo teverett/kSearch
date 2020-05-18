@@ -16,12 +16,13 @@
  */
 package com.khubla.ksearch.service;
 
+import com.khubla.ksearch.SearchConfiguration.*;
 import com.khubla.ksearch.indexer.*;
 import com.khubla.ksearch.progress.impl.*;
 
 public class IndexService {
-	public void runIndexer() throws Exception {
-		new Thread(new Indexer(null)).start();
+	public void runIndexer(SearchIndex searchIndex) throws Exception {
+		new Indexer(searchIndex, null).run();
 	}
 
 	public void startIndexerScheduler() throws Exception {

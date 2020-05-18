@@ -23,6 +23,7 @@ import spark.*;
 public class AdminControllerImpl extends AbstractController {
 	@Override
 	public Object renderGET(Request request, Response response) throws Exception {
+		getIndexName(request);
 		return renderFTL("admin.ftl");
 	}
 }

@@ -27,6 +27,7 @@ import spark.*;
 public class DoSearchControllerImpl extends AbstractController {
 	@Override
 	public Object renderGET(Request request, Response response) throws Exception {
+		final String indexName = getIndexName(request);
 		final String searchterm = request.queryParams("searchterm");
 		/*
 		 * service
@@ -43,8 +44,8 @@ public class DoSearchControllerImpl extends AbstractController {
 		/*
 		 * get page
 		 */
-		final int pagesize = com.khubla.ksearch.Configuration.getConfiguration().getPage_size();
-		final List<FileDataSource> results = elasticService.query(searchterm, (page * pagesize), pagesize);
+		final int pagesize = com.khubla.ksearch.SearchConfiguration.getInstance().getPage_size();
+		final List<FileDataSource> results = elasticService.query(indexName, searchterm, (page * pagesize), pagesize);
 		addAttribute("files", results);
 		addAttribute("searchterm", searchterm);
 		/*

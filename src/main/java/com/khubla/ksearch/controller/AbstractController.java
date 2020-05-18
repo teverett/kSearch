@@ -18,6 +18,8 @@ package com.khubla.ksearch.controller;
 
 import java.util.*;
 
+import com.khubla.ksearch.*;
+
 import spark.*;
 import spark.template.freemarker.*;
 
@@ -31,11 +33,27 @@ public abstract class AbstractController implements Controller {
 		attributes.put(key, value);
 	}
 
+	protected String getIndexName(Request request) {
+		String indexName = request.queryParams("indexName");
+		if (null == indexName) {
+			indexName = SearchConfiguration.getInstance().getIndexNames().get(0);
+		}
+		addAttribute("indexName", indexName);
+		return indexName;
+	}
+
 	protected Object renderFTL(String ftl) throws Exception {
 		/*
 		 * org name
 		 */
-		addAttribute("orgname", com.khubla.ksearch.Configuration.getConfiguration().getOrgname());
+		addAttribute("orgname", SearchConfiguration.getInstance().getOrgname());
+		/*
+		 * indices
+		 */
+		addAttribute("indices", SearchConfiguration.getInstance().getIndexNames());
+		/*
+		 * render
+		 */
 		return new FreeMarkerEngine().render(new ModelAndView(attributes, ftl));
 	}
 }

@@ -24,10 +24,11 @@ import spark.*;
 public class IndexControllerImpl extends AbstractController {
 	@Override
 	public Object renderGET(Request request, Response response) throws Exception {
+		final String indexName = getIndexName(request);
 		/*
 		 * total documents
 		 */
-		addAttribute("documentcount", ServiceFactory.getInstance().getElasticService().getDocumentCount());
+		addAttribute("documentcount", ServiceFactory.getInstance().getElasticService().getDocumentCount(indexName));
 		/*
 		 * done
 		 */

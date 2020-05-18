@@ -20,9 +20,15 @@ import java.io.*;
 
 import org.apache.logging.log4j.*;
 
+import com.khubla.ksearch.SearchConfiguration.*;
 import com.khubla.ksearch.domain.*;
 import com.khubla.ksearch.indexer.action.*;
 
+/**
+ * index a certain file on a certain SearchIndex
+ *
+ * @author tom
+ */
 public class FileIndexerAction extends AbstractElasticAction {
 	/**
 	 * logger
@@ -32,6 +38,10 @@ public class FileIndexerAction extends AbstractElasticAction {
 	 * File
 	 */
 	private final String filePath;
+	/**
+	 * search index
+	 */
+	private final SearchIndex searchIndex;
 
 	/**
 	 * ctor
@@ -39,9 +49,10 @@ public class FileIndexerAction extends AbstractElasticAction {
 	 * @param file
 	 * @throws Exception
 	 */
-	public FileIndexerAction(String filePath) throws Exception {
+	public FileIndexerAction(SearchIndex searchIndex, String filePath) throws Exception {
 		super();
 		this.filePath = filePath;
+		this.searchIndex = searchIndex;
 	}
 
 	@Override
@@ -51,21 +62,21 @@ public class FileIndexerAction extends AbstractElasticAction {
 			/*
 			 * exists?
 			 */
-			if (elasticService.exists(filePath)) {
+			if (elasticService.exists(searchIndex.getElasticIndexName(), filePath)) {
 				/*
 				 * needs update?
 				 */
-				final FileDataSource fileDataSource = elasticService.getMetadata(filePath);
+				final FileDataSource fileDataSource = elasticService.getMetadata(searchIndex.getElasticIndexName(), filePath);
 				final long filedate = fileDataSource.getModified_date();
 				if (filedate < lastModified()) {
 					logger.info("Updating: " + filePath);
-					elasticService.update(FileDataSource.buildFileDataSource(filePath));
+					elasticService.update(searchIndex.getElasticIndexName(), FileDataSource.buildFileDataSource(filePath));
 				} else {
 					logger.info("Skipped: " + filePath);
 				}
 			} else {
 				logger.info("Writing: " + filePath);
-				elasticService.write(FileDataSource.buildFileDataSource(filePath));
+				elasticService.write(searchIndex.getElasticIndexName(), FileDataSource.buildFileDataSource(filePath));
 			}
 		} catch (final Exception e) {
 			logger.error("Exception indexing '" + filePath + "'", e);

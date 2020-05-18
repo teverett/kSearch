@@ -25,12 +25,13 @@ import spark.*;
 public class ShowDocControllerImpl extends AbstractController {
 	@Override
 	public Object renderGET(Request request, Response response) throws Exception {
+		final String indexName = getIndexName(request);
 		final String docname = request.queryParams("doc");
 		if (null != docname) {
 			final FileService fileService = ServiceFactory.getInstance().getFileService();
 			final ElasticService elasticService = ServiceFactory.getInstance().getElasticService();
 			final byte[] data = fileService.readFile(docname);
-			final FileDataSource fileDataSource = elasticService.getMetadata(docname);
+			final FileDataSource fileDataSource = elasticService.getMetadata(indexName, docname);
 			if ((null != data) && (null != fileDataSource)) {
 				response.header("content-disposition", "attachment; filename=" + fileDataSource.getName());
 				return data;

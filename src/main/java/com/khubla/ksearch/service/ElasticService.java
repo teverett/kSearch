@@ -77,8 +77,8 @@ public class ElasticService {
 		private final RestHighLevelClient client;
 
 		private RestHighLevelClientFactory() {
-			elasticHost = com.khubla.ksearch.Configuration.getConfiguration().getElasticHost();
-			elasticPort = com.khubla.ksearch.Configuration.getConfiguration().getElasticPort();
+			elasticHost = com.khubla.ksearch.SearchConfiguration.getInstance().getElasticHost();
+			elasticPort = com.khubla.ksearch.SearchConfiguration.getInstance().getElasticPort();
 			/*
 			 * connect
 			 */
@@ -95,10 +95,6 @@ public class ElasticService {
 	 */
 	private static final Logger logger = LogManager.getLogger(ElasticService.class);
 	/**
-	 * indexName
-	 */
-	protected final String indexName;
-	/**
 	 * GSON
 	 */
 	private final Gson gson = new Gson();
@@ -110,10 +106,6 @@ public class ElasticService {
 	 * @throws Exception
 	 */
 	public ElasticService() throws Exception {
-		/*
-		 * data
-		 */
-		indexName = com.khubla.ksearch.Configuration.getConfiguration().getElasticIndex();
 	}
 
 	/**
@@ -122,7 +114,7 @@ public class ElasticService {
 	 * @param filename
 	 * @throws IOException
 	 */
-	public void delete(String fileAbsolutePath) throws IOException {
+	public void delete(String indexName, String fileAbsolutePath) throws IOException {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final DeleteRequest request = new DeleteRequest(indexName, fileAbsolutePath);
@@ -139,7 +131,7 @@ public class ElasticService {
 	 *
 	 * @throws Exception
 	 */
-	public void deleteAll() throws Exception {
+	public void deleteAll(String indexName) throws Exception {
 		try {
 			/*
 			 * pages of 100
@@ -148,10 +140,10 @@ public class ElasticService {
 			int idx = 0;
 			List<FileDataSource> filedataSources = null;
 			do {
-				filedataSources = getAll(idx, pagesize);
+				filedataSources = getAll(indexName, idx, pagesize);
 				idx += filedataSources.size();
 				for (final FileDataSource fileDataSource : filedataSources) {
-					delete(fileDataSource.getFile_absolute_path());
+					delete(indexName, fileDataSource.getFile_absolute_path());
 				}
 			} while (filedataSources.size() == pagesize);
 		} catch (final IOException e) {
@@ -166,7 +158,7 @@ public class ElasticService {
 	 * @return exists
 	 * @throws IOException
 	 */
-	public boolean exists(String fileAbsolutePath) throws IOException {
+	public boolean exists(String indexName, String fileAbsolutePath) throws IOException {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final GetRequest getRequest = new GetRequest(indexName, fileAbsolutePath);
@@ -184,7 +176,7 @@ public class ElasticService {
 	 *
 	 * @throws IOException
 	 */
-	public FileDataSource get(String fileAbsolutePath) throws IOException {
+	public FileDataSource get(String indexName, String fileAbsolutePath) throws IOException {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final GetRequest getRequest = new GetRequest(indexName, fileAbsolutePath);
@@ -203,7 +195,7 @@ public class ElasticService {
 	 *
 	 * @throws IOException
 	 */
-	public List<FileDataSource> getAll(int from, int size) throws IOException {
+	public List<FileDataSource> getAll(String indexName, int from, int size) throws IOException {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final List<FileDataSource> ret = new ArrayList<FileDataSource>();
@@ -234,7 +226,7 @@ public class ElasticService {
 	 *
 	 * @throws IOException
 	 */
-	public long getDocumentCount() throws IOException {
+	public long getDocumentCount(String indexName) throws IOException {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final CountRequest countRequest = new CountRequest(indexName);
@@ -257,7 +249,7 @@ public class ElasticService {
 	 *
 	 * @throws IOException
 	 */
-	public FileDataSource getMetadata(String fileAbsolutePath) throws IOException {
+	public FileDataSource getMetadata(String indexName, String fileAbsolutePath) throws IOException {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final GetRequest getRequest = new GetRequest(indexName, fileAbsolutePath);
@@ -277,7 +269,7 @@ public class ElasticService {
 	 *
 	 * @throws IOException
 	 */
-	public List<FileDataSource> query(String query, int from, int size) throws IOException {
+	public List<FileDataSource> query(String indexName, String query, int from, int size) throws IOException {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final List<FileDataSource> ret = new ArrayList<FileDataSource>();
@@ -310,7 +302,7 @@ public class ElasticService {
 	 *
 	 * @throws IOException
 	 */
-	public List<FileDataSource> search(String searchTerm, int from, int size) throws IOException {
+	public List<FileDataSource> search(String indexName, String searchTerm, int from, int size) throws IOException {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final List<FileDataSource> ret = new ArrayList<FileDataSource>();
@@ -343,7 +335,7 @@ public class ElasticService {
 	 *
 	 * @throws IOException
 	 */
-	public List<FileDataSource> simpleQuery(String query, int from, int size) throws IOException {
+	public List<FileDataSource> simpleQuery(String indexName, String query, int from, int size) throws IOException {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final List<FileDataSource> ret = new ArrayList<FileDataSource>();
@@ -376,7 +368,7 @@ public class ElasticService {
 	 *
 	 * @throws Exception
 	 */
-	public void update(FileDataSource fileDataSource) throws Exception {
+	public void update(String indexName, FileDataSource fileDataSource) throws Exception {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			/*
@@ -401,7 +393,7 @@ public class ElasticService {
 	 *
 	 * @throws Exception
 	 */
-	public void write(FileDataSource fileDataSource) throws Exception {
+	public void write(String indexName, FileDataSource fileDataSource) throws Exception {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			/*

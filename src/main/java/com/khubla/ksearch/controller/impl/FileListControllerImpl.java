@@ -27,6 +27,7 @@ import spark.*;
 public class FileListControllerImpl extends AbstractController {
 	@Override
 	public Object renderGET(Request request, Response response) throws Exception {
+		final String indexName = getIndexName(request);
 		/*
 		 * service
 		 */
@@ -42,8 +43,8 @@ public class FileListControllerImpl extends AbstractController {
 		/*
 		 * get page
 		 */
-		final int pagesize = com.khubla.ksearch.Configuration.getConfiguration().getPage_size();
-		final List<FileDataSource> results = elasticService.getAll((page * pagesize), pagesize);
+		final int pagesize = com.khubla.ksearch.SearchConfiguration.getInstance().getPage_size();
+		final List<FileDataSource> results = elasticService.getAll(indexName, (page * pagesize), pagesize);
 		addAttribute("files", results);
 		/*
 		 * page data

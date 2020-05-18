@@ -20,6 +20,8 @@ import java.util.concurrent.*;
 
 import org.apache.logging.log4j.*;
 
+import com.khubla.ksearch.*;
+import com.khubla.ksearch.SearchConfiguration.*;
 import com.khubla.ksearch.progress.*;
 
 public class IndexScheduler {
@@ -28,7 +30,7 @@ public class IndexScheduler {
 	 */
 	private static final Logger logger = LogManager.getLogger(IndexScheduler.class);
 	/**
-	 * callnback
+	 * callback
 	 */
 	private final ProgressCallback progressCallback;
 
@@ -39,7 +41,9 @@ public class IndexScheduler {
 	public void start() {
 		try {
 			final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
-			scheduledExecutorService.scheduleAtFixedRate(new Indexer(progressCallback), 0, com.khubla.ksearch.Configuration.getConfiguration().getRefresh_minutes(), TimeUnit.MINUTES);
+			for (final SearchIndex searchIndex : SearchConfiguration.getInstance().getIndices().values()) {
+				scheduledExecutorService.scheduleAtFixedRate(new Indexer(searchIndex, progressCallback), 0, searchIndex.getRefresh_minutes(), TimeUnit.MINUTES);
+			}
 		} catch (final Exception e) {
 			logger.error(e.getMessage(), e);
 		}
