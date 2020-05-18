@@ -9,11 +9,11 @@ A simple local search engine built on [ElasticSearch](https://www.elastic.co/)
 
 Search Screen
 
-![](https://github.com/teverett/kSearch/raw/master/screens/index.png =250x)
+<img src="https://github.com/teverett/kSearch/raw/master/screens/index.png" width="600" />
 
 Search Results
 
-![](https://github.com/teverett/kSearch/raw/master/screens/results =250x)
+<img src="https://github.com/teverett/kSearch/raw/master/screens/results.png" width="600" />
 
 
 ## License
