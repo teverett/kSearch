@@ -134,7 +134,7 @@ public class Indexer implements Runnable {
 	public void run() {
 		try {
 			logger.info("Beginning Indexing");
-			final ExecutorService executor = Executors.newFixedThreadPool(SearchConfiguration.getInstance().getThreads());
+			final ExecutorService executor = Executors.newFixedThreadPool(SearchConfiguration.getInstance().getFile_threads());
 			/*
 			 * start the cleaner
 			 */

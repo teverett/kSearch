@@ -40,7 +40,7 @@ public class IndexScheduler {
 
 	public void start() {
 		try {
-			final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+			final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(SearchConfiguration.getInstance().getIndex_threads());
 			for (final SearchIndex searchIndex : SearchConfiguration.getInstance().getIndices().values()) {
 				scheduledExecutorService.scheduleAtFixedRate(new Indexer(searchIndex, progressCallback), 0, searchIndex.getRefresh_minutes(), TimeUnit.MINUTES);
 			}

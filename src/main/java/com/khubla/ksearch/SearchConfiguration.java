@@ -122,9 +122,13 @@ public class SearchConfiguration {
 	}
 
 	/**
-	 * index threads
+	 * file_threads
 	 */
-	private int threads;
+	private int file_threads;
+	/**
+	 * file_threads
+	 */
+	private int index_threads;
 	/**
 	 * elastic host
 	 */
@@ -161,8 +165,16 @@ public class SearchConfiguration {
 		return elasticPort;
 	}
 
+	public int getFile_threads() {
+		return file_threads;
+	}
+
 	public int getHttpPort() {
 		return httpPort;
+	}
+
+	public int getIndex_threads() {
+		return index_threads;
 	}
 
 	public List<String> getIndexNames() {
@@ -183,10 +195,6 @@ public class SearchConfiguration {
 
 	public int getPage_size() {
 		return page_size;
-	}
-
-	public int getThreads() {
-		return threads;
 	}
 
 	private void load(String propertiesFile) throws Exception {
@@ -214,7 +222,8 @@ public class SearchConfiguration {
 			/*
 			 * parameters
 			 */
-			threads = configuration.get(Integer.class, "threads");
+			index_threads = configuration.get(Integer.class, "index_threads");
+			file_threads = configuration.get(Integer.class, "file_threads");
 			elasticPort = configuration.get(Integer.class, "elastic.port");
 			// refresh_minutes = configuration.get(Integer.class, "refresh_minutes");
 			httpPort = configuration.get(Integer.class, "http.port");
@@ -235,8 +244,16 @@ public class SearchConfiguration {
 		this.elasticPort = elasticPort;
 	}
 
+	public void setFile_threads(int file_threads) {
+		this.file_threads = file_threads;
+	}
+
 	public void setHttpPort(int httpPort) {
 		this.httpPort = httpPort;
+	}
+
+	public void setIndex_threads(int index_threads) {
+		this.index_threads = index_threads;
 	}
 
 	public void setOrgname(String orgname) {
@@ -245,9 +262,5 @@ public class SearchConfiguration {
 
 	public void setPage_size(int page_size) {
 		this.page_size = page_size;
-	}
-
-	public void setThreads(int threads) {
-		this.threads = threads;
 	}
 }
