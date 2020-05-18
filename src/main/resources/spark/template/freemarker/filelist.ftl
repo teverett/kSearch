@@ -11,10 +11,10 @@
 			<nav aria-label="Page Navigation">
 				<ul class="pagination">
 					<#if showprevious==true>
-					<li class="page-item"><a class="page-link" href="/filelist?page=${previouspage}">Previous</a></li>
+					<li class="page-item"><a class="page-link" href="/filelist?page=${previouspage}&indexName=${indexName}">Previous</a></li>
 					</#if>
 					<#if shownext==true>	
-					<li class="page-item"><a class="page-link" href="/filelist?page=${nextpage}">Next</a></li>
+					<li class="page-item"><a class="page-link" href="/filelist?page=${nextpage}&indexName=${indexName}">Next</a></li>
 					</#if>
 				</ul>
 			</nav>

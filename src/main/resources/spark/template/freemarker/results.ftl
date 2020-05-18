@@ -12,10 +12,10 @@
 			<nav aria-label="Page Navigation">
 				<ul class="pagination">
 					<#if showprevious==true>
-					<li class="page-item"><a class="page-link" href="/search?page=${previouspage}&searchterm=${searchterm}">Previous</a></li>
+					<li class="page-item"><a class="page-link" href="/search?page=${previouspage}&searchterm=${searchterm}&indexName=${indexName}">Previous</a></li>
 					</#if>
 					<#if shownext==true>	
-					<li class="page-item"><a class="page-link" href="/search?page=${nextpage}&searchterm=${searchterm}">Next</a></li>
+					<li class="page-item"><a class="page-link" href="/search?page=${nextpage}&searchterm=${searchterm}&indexName=${indexName}">Next</a></li>
 					</#if>
 				</ul>
 			</nav>
