@@ -5,17 +5,6 @@
 
 A simple local search engine built on [ElasticSearch](https://www.elastic.co/)
 
-## Screen shots
-
-Search Screen
-
-<img src="https://github.com/teverett/kSearch/raw/master/screens/index.png" width="600" />
-
-Search Results
-
-<img src="https://github.com/teverett/kSearch/raw/master/screens/results.png" width="600" />
-
-
 ## License
 
 kSearch is under the [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)
@@ -47,4 +36,15 @@ mvn clean package
 
 ## Running
 To run kSearch, simply run `run.sh` which will run the binary jar and use `ksearch.properties` as the configuration file.
+
+## Screen shots
+
+<b>Search Screen</b>
+
+<img src="https://github.com/teverett/kSearch/raw/master/screens/index.png" width="600" />
+
+<b>Search Results</b>
+
+<img src="https://github.com/teverett/kSearch/raw/master/screens/results.png" width="600" />
+
 
