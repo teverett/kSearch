@@ -44,7 +44,7 @@ public class DoSearchControllerImpl extends AbstractController {
 		 * get page
 		 */
 		final int pagesize = com.khubla.ksearch.Configuration.getConfiguration().getPage_size();
-		final List<FileDataSource> results = elasticService.search(searchterm, (page * pagesize), pagesize);
+		final List<FileDataSource> results = elasticService.query(searchterm, (page * pagesize), pagesize);
 		addAttribute("files", results);
 		addAttribute("searchterm", searchterm);
 		/*

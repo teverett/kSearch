@@ -273,6 +273,39 @@ public class ElasticService {
 	}
 
 	/**
+	 * query
+	 *
+	 * @throws IOException
+	 */
+	public List<FileDataSource> query(String query, int from, int size) throws IOException {
+		try {
+			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
+			final List<FileDataSource> ret = new ArrayList<FileDataSource>();
+			final SearchRequest searchRequest = new SearchRequest(indexName);
+			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+			searchSourceBuilder.from(from);
+			searchSourceBuilder.size(size);
+			final QueryStringQueryBuilder queryStringQueryBuilder = new QueryStringQueryBuilder(query);
+			searchSourceBuilder.query(queryStringQueryBuilder);
+			final String[] excludeFields = new String[] { FileDataSource.DATA };
+			searchSourceBuilder.fetchSource(null, excludeFields);
+			searchSourceBuilder.sort(new ScoreSortBuilder().order(SortOrder.DESC));
+			searchRequest.source(searchSourceBuilder);
+			final SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+			logger.info(searchResponse.toString());
+			for (final SearchHit searchHit : searchResponse.getHits()) {
+				final String json = searchHit.toString();
+				final FileData fileData = gson.fromJson(json, FileData.class);
+				ret.add(fileData.get_source());
+			}
+			return ret;
+		} catch (final IOException e) {
+			logger.error("Error searching " + query, e);
+			throw e;
+		}
+	}
+
+	/**
 	 * search
 	 *
 	 * @throws IOException
@@ -310,7 +343,7 @@ public class ElasticService {
 	 *
 	 * @throws IOException
 	 */
-	public List<FileDataSource> query(String query, int from, int size) throws IOException {
+	public List<FileDataSource> simpleQuery(String query, int from, int size) throws IOException {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final List<FileDataSource> ret = new ArrayList<FileDataSource>();
@@ -318,7 +351,7 @@ public class ElasticService {
 			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 			searchSourceBuilder.from(from);
 			searchSourceBuilder.size(size);
-			SimpleQueryStringBuilder simpleQueryStringBuilder = new SimpleQueryStringBuilder(query);
+			final SimpleQueryStringBuilder simpleQueryStringBuilder = new SimpleQueryStringBuilder(query);
 			searchSourceBuilder.query(simpleQueryStringBuilder);
 			final String[] excludeFields = new String[] { FileDataSource.DATA };
 			searchSourceBuilder.fetchSource(null, excludeFields);
