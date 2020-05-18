@@ -41,10 +41,10 @@ To run kSearch, simply run `run.sh` which will run the binary jar and use `ksear
 
 <b>Search Screen</b>
 
-<img src="https://github.com/teverett/kSearch/raw/master/screens/index.png" width="600" />
+<img src="https://github.com/teverett/kSearch/raw/master/screens/index.png" width="800" />
 
 <b>Search Results</b>
 
-<img src="https://github.com/teverett/kSearch/raw/master/screens/results.png" width="600" />
+<img src="https://github.com/teverett/kSearch/raw/master/screens/results.png" width="800" />
 
 
