@@ -17,14 +17,14 @@
 package com.khubla.ksearch.indexer.action.impl;
 
 import java.io.*;
+import java.util.*;
 
 import org.apache.logging.log4j.*;
 
 import com.khubla.ksearch.domain.*;
 import com.khubla.ksearch.indexer.action.*;
-import com.khubla.ksearch.service.*;
 
-public class IndexCleanerAction extends AbstractElasticAction implements FileIterator {
+public class IndexCleanerAction extends AbstractElasticAction {
 	/**
 	 * logger
 	 */
@@ -44,14 +44,25 @@ public class IndexCleanerAction extends AbstractElasticAction implements FileIte
 	public void doAction() {
 		try {
 			logger.info("Running IndexCleanerAction");
-			elasticService.iterateAll(this);
+			/*
+			 * pages of 100
+			 */
+			final int pagesize = 100;
+			int idx = 0;
+			List<FileDataSource> filedataSources = null;
+			do {
+				filedataSources = elasticService.getAll(idx, pagesize);
+				idx += filedataSources.size();
+				for (final FileDataSource fileDataSource : filedataSources) {
+					process(fileDataSource);
+				}
+			} while (filedataSources.size() == pagesize);
 		} catch (final Exception e) {
 			logger.error("Exception in IndexCleanerAction", e);
 		}
 	}
 
-	@Override
-	public void file(FileDataSource fileDataSource) {
+	private void process(FileDataSource fileDataSource) {
 		try {
 			final String fn = fileDataSource.getFile_absolute_path();
 			/*

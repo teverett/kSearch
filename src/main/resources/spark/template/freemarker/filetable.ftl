@@ -1,4 +1,3 @@
- 			<p>Total Results: ${files?size}</p>
  			<table class="table table-sm">
 			  <thead>
 			    <tr>

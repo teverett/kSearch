@@ -86,10 +86,6 @@ public class Configuration {
 	 */
 	private int refresh_minutes;
 	/**
-	 * max searxh results
-	 */
-	private long max_search_results;
-	/**
 	 * orgname
 	 */
 	private String orgname;
@@ -128,10 +124,6 @@ public class Configuration {
 		return httpPort;
 	}
 
-	public long getMax_search_results() {
-		return max_search_results;
-	}
-
 	public String getOrgname() {
 		return orgname;
 	}
@@ -163,7 +155,6 @@ public class Configuration {
 			elasticIndex = properties.getProperty("elastic.index").trim();
 			httpPort = Integer.parseInt(properties.getProperty("http.port"));
 			refresh_minutes = Integer.parseInt(properties.getProperty("refresh_minutes"));
-			max_search_results = Long.parseLong(properties.getProperty("elastic.max_search_results"));
 			orgname = properties.getProperty("orgname").trim();
 			page_size = Integer.parseInt(properties.getProperty("page_size"));
 		} catch (final Exception e) {
@@ -194,10 +185,6 @@ public class Configuration {
 
 	public void setHttpPort(int httpPort) {
 		this.httpPort = httpPort;
-	}
-
-	public void setMax_search_results(long max_search_results) {
-		this.max_search_results = max_search_results;
 	}
 
 	public void setOrgname(String orgname) {

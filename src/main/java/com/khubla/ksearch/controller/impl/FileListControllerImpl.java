@@ -16,7 +16,10 @@
  */
 package com.khubla.ksearch.controller.impl;
 
+import java.util.*;
+
 import com.khubla.ksearch.controller.*;
+import com.khubla.ksearch.domain.*;
 import com.khubla.ksearch.service.*;
 
 import spark.*;
@@ -24,8 +27,36 @@ import spark.*;
 public class FileListControllerImpl extends AbstractController {
 	@Override
 	public Object renderGET(Request request, Response response) throws Exception {
+		/*
+		 * service
+		 */
 		final ElasticService elasticService = ServiceFactory.getInstance().getElasticService();
-		addAttribute("files", elasticService.getAll());
+		/*
+		 * page
+		 */
+		final String pageparam = request.queryParams("page");
+		int page = 0;
+		if (null != pageparam) {
+			page = Integer.parseInt(pageparam);
+		}
+		/*
+		 * get page
+		 */
+		final int pagesize = com.khubla.ksearch.Configuration.getConfiguration().getPage_size();
+		final List<FileDataSource> results = elasticService.getAll((page * pagesize), pagesize);
+		addAttribute("files", results);
+		/*
+		 * page data
+		 */
+		final int previouspage = (page > 0) ? page - 1 : 0;
+		final int nextpage = page + 1;
+		addAttribute("previouspage", previouspage);
+		addAttribute("nextpage", nextpage);
+		addAttribute("showprevious", (page > 0) ? true : false);
+		addAttribute("shownext", (results.size() > 0));
+		/*
+		 * done
+		 */
 		return renderFTL("filelist.ftl");
 	}
 }

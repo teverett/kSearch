@@ -98,10 +98,6 @@ public class ElasticService {
 	 */
 	protected final String indexName;
 	/**
-	 * max search results
-	 */
-	private final long max_search_results;
-	/**
 	 * GSON
 	 */
 	private final Gson gson = new Gson();
@@ -117,7 +113,6 @@ public class ElasticService {
 		 * data
 		 */
 		indexName = com.khubla.ksearch.Configuration.getConfiguration().getElasticIndex();
-		max_search_results = com.khubla.ksearch.Configuration.getConfiguration().getMax_search_results();
 	}
 
 	/**
@@ -145,10 +140,19 @@ public class ElasticService {
 	 */
 	public void deleteAll() throws Exception {
 		try {
-			final List<FileDataSource> filedataSources = getAll();
-			for (final FileDataSource fileDataSource : filedataSources) {
-				delete(fileDataSource.getFile_absolute_path());
-			}
+			/*
+			 * pages of 100
+			 */
+			final int pagesize = 100;
+			int idx = 0;
+			List<FileDataSource> filedataSources = null;
+			do {
+				filedataSources = getAll(idx, pagesize);
+				idx += filedataSources.size();
+				for (final FileDataSource fileDataSource : filedataSources) {
+					delete(fileDataSource.getFile_absolute_path());
+				}
+			} while (filedataSources.size() == pagesize);
 		} catch (final IOException e) {
 			logger.error("Error in  deleteAll", e);
 			throw e;
@@ -198,13 +202,14 @@ public class ElasticService {
 	 *
 	 * @throws IOException
 	 */
-	public List<FileDataSource> getAll() throws IOException {
+	public List<FileDataSource> getAll(int from, int size) throws IOException {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final List<FileDataSource> ret = new ArrayList<FileDataSource>();
 			final SearchRequest searchRequest = new SearchRequest(indexName);
 			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-			searchSourceBuilder.size((int) max_search_results);
+			searchSourceBuilder.from(from);
+			searchSourceBuilder.size(size);
 			searchSourceBuilder.query(QueryBuilders.matchAllQuery());
 			final String[] excludeFields = new String[] { FileDataSource.DATA };
 			searchSourceBuilder.fetchSource(null, excludeFields);
@@ -244,45 +249,18 @@ public class ElasticService {
 	}
 
 	/**
-	 * iterate all files in the elastic engine
-	 *
-	 * @throws IOException
-	 */
-	public void iterateAll(FileIterator fileIterator) throws IOException {
-		try {
-			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
-			final SearchRequest searchRequest = new SearchRequest(indexName);
-			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-			searchSourceBuilder.size((int) max_search_results);
-			searchSourceBuilder.query(QueryBuilders.matchAllQuery());
-			final String[] excludeFields = new String[] { FileDataSource.DATA };
-			searchSourceBuilder.fetchSource(null, excludeFields);
-			searchRequest.source(searchSourceBuilder);
-			final SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-			logger.info(searchResponse.toString());
-			for (final SearchHit searchHit : searchResponse.getHits()) {
-				final String json = searchHit.toString();
-				final FileData fileData = gson.fromJson(json, FileData.class);
-				fileIterator.file(fileData.get_source());
-			}
-		} catch (final IOException e) {
-			logger.error("Error in iterateAll", e);
-			throw e;
-		}
-	}
-
-	/**
 	 * search
 	 *
 	 * @throws IOException
 	 */
-	public List<FileDataSource> search(String searchTerm) throws IOException {
+	public List<FileDataSource> search(String searchTerm, int from, int size) throws IOException {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final List<FileDataSource> ret = new ArrayList<FileDataSource>();
 			final SearchRequest searchRequest = new SearchRequest(indexName);
 			final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-			searchSourceBuilder.size((int) max_search_results);
+			searchSourceBuilder.from(from);
+			searchSourceBuilder.size(size);
 			final MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder(FileDataSource.DATA, searchTerm);
 			searchSourceBuilder.query(matchQueryBuilder);
 			final String[] excludeFields = new String[] { FileDataSource.DATA };

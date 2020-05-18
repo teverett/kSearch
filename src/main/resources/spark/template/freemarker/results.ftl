@@ -9,6 +9,16 @@
 		  	<div class="container">
 		    <p>${searchterm}</p>
 		    <#include "filetable.ftl">
+			<nav aria-label="Page Navigation">
+				<ul class="pagination">
+					<#if showprevious==true>
+					<li class="page-item"><a class="page-link" href="/search?page=${previouspage}&searchterm=${searchterm}">Previous</a></li>
+					</#if>
+					<#if shownext==true>	
+					<li class="page-item"><a class="page-link" href="/search?page=${nextpage}&searchterm=${searchterm}">Next</a></li>
+					</#if>
+				</ul>
+			</nav>
 		  	</div>
 		</main>
 		<#include "footer.ftl">
