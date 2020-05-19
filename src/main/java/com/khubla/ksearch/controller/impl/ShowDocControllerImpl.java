@@ -16,6 +16,7 @@
  */
 package com.khubla.ksearch.controller.impl;
 
+import com.khubla.ksearch.SearchConfiguration.*;
 import com.khubla.ksearch.controller.*;
 import com.khubla.ksearch.domain.*;
 import com.khubla.ksearch.service.*;
@@ -25,13 +26,13 @@ import spark.*;
 public class ShowDocControllerImpl extends AbstractController {
 	@Override
 	public Object renderGET(Request request, Response response) throws Exception {
-		final String indexName = getIndexName(request);
+		final SearchIndex searchIndex = getSearchIndexName(request);
 		final String docname = request.queryParams("doc");
 		if (null != docname) {
 			final FileService fileService = ServiceFactory.getInstance().getFileService();
 			final ElasticService elasticService = ServiceFactory.getInstance().getElasticService();
 			final byte[] data = fileService.readFile(docname);
-			final FileDataSource fileDataSource = elasticService.getMetadata(indexName, docname);
+			final FileDataSource fileDataSource = elasticService.getMetadata(searchIndex.getElasticIndexName(), docname);
 			if ((null != data) && (null != fileDataSource)) {
 				response.header("content-disposition", "attachment; filename=" + fileDataSource.getName());
 				return data;

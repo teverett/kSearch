@@ -16,7 +16,6 @@
  */
 package com.khubla.ksearch.service;
 
-import java.io.*;
 import java.util.*;
 
 import org.apache.http.*;
@@ -112,15 +111,15 @@ public class ElasticService {
 	 * delete a file from the elastic index
 	 *
 	 * @param filename
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public void delete(String indexName, String fileAbsolutePath) throws IOException {
+	public void delete(String indexName, String fileAbsolutePath) throws Exception {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final DeleteRequest request = new DeleteRequest(indexName, fileAbsolutePath);
 			final DeleteResponse deleteResponse = client.delete(request, RequestOptions.DEFAULT);
 			logger.info(deleteResponse.toString());
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			logger.error("Error in  delete " + fileAbsolutePath, e);
 			throw e;
 		}
@@ -146,7 +145,7 @@ public class ElasticService {
 					delete(indexName, fileDataSource.getFile_absolute_path());
 				}
 			} while (filedataSources.size() == pagesize);
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			logger.error("Error in  deleteAll", e);
 			throw e;
 		}
@@ -156,16 +155,16 @@ public class ElasticService {
 	 * check if file exists
 	 *
 	 * @return exists
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public boolean exists(String indexName, String fileAbsolutePath) throws IOException {
+	public boolean exists(String indexName, String fileAbsolutePath) throws Exception {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final GetRequest getRequest = new GetRequest(indexName, fileAbsolutePath);
 			getRequest.fetchSourceContext(new FetchSourceContext(false));
 			getRequest.storedFields("_none_");
 			return client.exists(getRequest, RequestOptions.DEFAULT);
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			logger.error("Error in  exists " + fileAbsolutePath, e);
 			throw e;
 		}
@@ -174,9 +173,9 @@ public class ElasticService {
 	/**
 	 * get a file
 	 *
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public FileDataSource get(String indexName, String fileAbsolutePath) throws IOException {
+	public FileDataSource get(String indexName, String fileAbsolutePath) throws Exception {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final GetRequest getRequest = new GetRequest(indexName, fileAbsolutePath);
@@ -184,7 +183,7 @@ public class ElasticService {
 			final GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
 			final FileDataSource fileDataSource = gson.fromJson(getResponse.getSourceAsString(), FileDataSource.class);
 			return fileDataSource;
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			logger.error("Error in  get " + fileAbsolutePath, e);
 			throw e;
 		}
@@ -193,9 +192,9 @@ public class ElasticService {
 	/**
 	 * get all files in the elastic engine
 	 *
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public List<FileDataSource> getAll(String indexName, int from, int size) throws IOException {
+	public List<FileDataSource> getAll(String indexName, int from, int size) throws Exception {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final List<FileDataSource> ret = new ArrayList<FileDataSource>();
@@ -215,7 +214,7 @@ public class ElasticService {
 				ret.add(fileData.get_source());
 			}
 			return ret;
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			logger.error("Error in getAll", e);
 			throw e;
 		}
@@ -224,9 +223,9 @@ public class ElasticService {
 	/**
 	 * total count of documents
 	 *
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public long getDocumentCount(String indexName) throws IOException {
+	public long getDocumentCount(String indexName) throws Exception {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final CountRequest countRequest = new CountRequest(indexName);
@@ -238,7 +237,7 @@ public class ElasticService {
 			final CountResponse countResponse = client.count(countRequest, RequestOptions.DEFAULT);
 			logger.info(countResponse.toString());
 			return countResponse.getCount();
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			logger.error("Error in getDocumentCount", e);
 			throw e;
 		}
@@ -247,9 +246,9 @@ public class ElasticService {
 	/**
 	 * get a file's metadata
 	 *
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public FileDataSource getMetadata(String indexName, String fileAbsolutePath) throws IOException {
+	public FileDataSource getMetadata(String indexName, String fileAbsolutePath) throws Exception {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final GetRequest getRequest = new GetRequest(indexName, fileAbsolutePath);
@@ -258,7 +257,7 @@ public class ElasticService {
 			final GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
 			final FileDataSource fileDataSource = gson.fromJson(getResponse.getSourceAsString(), FileDataSource.class);
 			return fileDataSource;
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			logger.error("Error in  getMetadata " + fileAbsolutePath, e);
 			throw e;
 		}
@@ -267,9 +266,9 @@ public class ElasticService {
 	/**
 	 * query
 	 *
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public List<FileDataSource> query(String indexName, String query, int from, int size) throws IOException {
+	public List<FileDataSource> query(String indexName, String query, int from, int size) throws Exception {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final List<FileDataSource> ret = new ArrayList<FileDataSource>();
@@ -291,7 +290,7 @@ public class ElasticService {
 				ret.add(fileData.get_source());
 			}
 			return ret;
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			logger.error("Error searching " + query, e);
 			throw e;
 		}
@@ -300,9 +299,9 @@ public class ElasticService {
 	/**
 	 * search
 	 *
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public List<FileDataSource> search(String indexName, String searchTerm, int from, int size) throws IOException {
+	public List<FileDataSource> search(String indexName, String searchTerm, int from, int size) throws Exception {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final List<FileDataSource> ret = new ArrayList<FileDataSource>();
@@ -324,7 +323,7 @@ public class ElasticService {
 				ret.add(fileData.get_source());
 			}
 			return ret;
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			logger.error("Error searching " + searchTerm, e);
 			throw e;
 		}
@@ -333,9 +332,9 @@ public class ElasticService {
 	/**
 	 * query
 	 *
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public List<FileDataSource> simpleQuery(String indexName, String query, int from, int size) throws IOException {
+	public List<FileDataSource> simpleQuery(String indexName, String query, int from, int size) throws Exception {
 		try {
 			final RestHighLevelClient client = RestHighLevelClientFactory.getInstance().getRestHighLevelClient();
 			final List<FileDataSource> ret = new ArrayList<FileDataSource>();
@@ -357,7 +356,7 @@ public class ElasticService {
 				ret.add(fileData.get_source());
 			}
 			return ret;
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			logger.error("Error searching " + query, e);
 			throw e;
 		}
@@ -382,7 +381,7 @@ public class ElasticService {
 			updateRequest.doc(json, XContentType.JSON);
 			final UpdateResponse updateResponse = client.update(updateRequest, RequestOptions.DEFAULT);
 			logger.info(updateResponse.toString());
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			logger.error("Error updating " + fileDataSource.getFile_absolute_path(), e);
 			throw e;
 		}
@@ -408,7 +407,7 @@ public class ElasticService {
 			request.source(json, XContentType.JSON);
 			final IndexResponse indexResponse = client.index(request, RequestOptions.DEFAULT);
 			logger.info(indexResponse.toString());
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			logger.error("Error writing " + fileDataSource.getFile_absolute_path(), e);
 			throw e;
 		}

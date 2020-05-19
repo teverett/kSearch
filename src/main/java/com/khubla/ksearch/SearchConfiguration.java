@@ -236,6 +236,14 @@ public class SearchConfiguration {
 		}
 	}
 
+	public String resolveSearchIndexNameToElasticIndexName(String searchIndexName) {
+		final SearchIndex searchIndex = indices.get(searchIndexName);
+		if (null != searchIndex) {
+			return searchIndex.elasticIndexName;
+		}
+		return null;
+	}
+
 	public void setElasticHost(String elasticHost) {
 		this.elasticHost = elasticHost;
 	}

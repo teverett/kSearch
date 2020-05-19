@@ -56,11 +56,11 @@ public class ReindexControllerImpl extends AbstractController {
 
 	@Override
 	public Object renderGET(Request request, Response response) throws Exception {
-		final String indexName = getIndexName(request);
+		final SearchIndex searchIndex = getSearchIndexName(request);
 		/*
 		 * spin a thread to do that....
 		 */
-		new Thread(new HackyThread(indexName)).start();
+		new Thread(new HackyThread(searchIndex.getElasticIndexName())).start();
 		response.redirect("/index");
 		return null;
 	}

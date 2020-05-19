@@ -18,6 +18,7 @@ package com.khubla.ksearch.controller.impl;
 
 import java.util.*;
 
+import com.khubla.ksearch.SearchConfiguration.*;
 import com.khubla.ksearch.controller.*;
 import com.khubla.ksearch.domain.*;
 import com.khubla.ksearch.service.*;
@@ -27,7 +28,7 @@ import spark.*;
 public class DoSearchControllerImpl extends AbstractController {
 	@Override
 	public Object renderGET(Request request, Response response) throws Exception {
-		final String indexName = getIndexName(request);
+		final SearchIndex searchIndex = getSearchIndexName(request);
 		final String searchterm = request.queryParams("searchterm");
 		/*
 		 * service
@@ -45,7 +46,7 @@ public class DoSearchControllerImpl extends AbstractController {
 		 * get page
 		 */
 		final int pagesize = com.khubla.ksearch.SearchConfiguration.getInstance().getPage_size();
-		final List<FileDataSource> results = elasticService.query(indexName, searchterm, (page * pagesize), pagesize);
+		final List<FileDataSource> results = elasticService.query(searchIndex.getElasticIndexName(), searchterm, (page * pagesize), pagesize);
 		addAttribute("files", results);
 		addAttribute("searchterm", searchterm);
 		/*

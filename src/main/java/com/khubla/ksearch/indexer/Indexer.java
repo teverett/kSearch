@@ -168,6 +168,10 @@ public class Indexer implements Runnable {
 					 */
 					executor.shutdown();
 					executor.awaitTermination(30, TimeUnit.HOURS);
+				} else {
+					if (null != progressCallback) {
+						progressCallback.status("Directory " + dir.getPath() + " does not exist");
+					}
 				}
 			}
 			logger.info("Completed Indexing");

@@ -16,6 +16,7 @@
  */
 package com.khubla.ksearch.controller.impl;
 
+import com.khubla.ksearch.SearchConfiguration.*;
 import com.khubla.ksearch.controller.*;
 import com.khubla.ksearch.service.*;
 
@@ -24,11 +25,11 @@ import spark.*;
 public class IndexControllerImpl extends AbstractController {
 	@Override
 	public Object renderGET(Request request, Response response) throws Exception {
-		final String indexName = getIndexName(request);
+		final SearchIndex searchIndex = getSearchIndexName(request);
 		/*
 		 * total documents
 		 */
-		addAttribute("documentcount", ServiceFactory.getInstance().getElasticService().getDocumentCount(indexName));
+		addAttribute("documentcount", ServiceFactory.getInstance().getElasticService().getDocumentCount(searchIndex.getElasticIndexName()));
 		/*
 		 * done
 		 */

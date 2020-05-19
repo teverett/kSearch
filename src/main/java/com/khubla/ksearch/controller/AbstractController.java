@@ -19,6 +19,7 @@ package com.khubla.ksearch.controller;
 import java.util.*;
 
 import com.khubla.ksearch.*;
+import com.khubla.ksearch.SearchConfiguration.*;
 
 import spark.*;
 import spark.template.freemarker.*;
@@ -33,13 +34,13 @@ public abstract class AbstractController implements Controller {
 		attributes.put(key, value);
 	}
 
-	protected String getIndexName(Request request) {
+	protected SearchIndex getSearchIndexName(Request request) {
 		String indexName = request.queryParams("indexName");
 		if (null == indexName) {
 			indexName = SearchConfiguration.getInstance().getIndexNames().get(0);
 		}
 		addAttribute("indexName", indexName);
-		return indexName;
+		return SearchConfiguration.getInstance().getIndices().get(indexName);
 	}
 
 	protected Object renderFTL(String ftl) throws Exception {
