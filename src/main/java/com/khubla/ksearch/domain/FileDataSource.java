@@ -23,6 +23,7 @@ import java.util.*;
 import org.apache.commons.io.*;
 
 import com.khubla.ksearch.service.*;
+import com.khubla.ksearch.util.*;
 
 public class FileDataSource {
 	/**
@@ -51,6 +52,7 @@ public class FileDataSource {
 		ret.setFile_extension(FilenameUtils.getExtension(file.getName()));
 		ret.setName(file.getName());
 		ret.setFile_size(file.length());
+		ret.setHash(HashUtil.createChecksum(fileData.getBytes()));
 		/*
 		 * beware, this is the PK!
 		 */
@@ -87,6 +89,10 @@ public class FileDataSource {
 	 */
 	private String name;
 	/**
+	 * hash
+	 */
+	private String hash;
+	/**
 	 * filename
 	 */
 	private long file_size;
@@ -119,6 +125,10 @@ public class FileDataSource {
 		return file_size;
 	}
 
+	public String getHash() {
+		return hash;
+	}
+
 	public long getModified_date() {
 		return modified_date;
 	}
@@ -149,6 +159,10 @@ public class FileDataSource {
 
 	public void setFile_size(long file_size) {
 		this.file_size = file_size;
+	}
+
+	public void setHash(String hash) {
+		this.hash = hash;
 	}
 
 	public void setHidden(boolean hidden) {
