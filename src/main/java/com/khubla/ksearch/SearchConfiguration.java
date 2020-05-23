@@ -225,13 +225,12 @@ public class SearchConfiguration {
 			index_threads = configuration.get(Integer.class, "index_threads");
 			file_threads = configuration.get(Integer.class, "file_threads");
 			elasticPort = configuration.get(Integer.class, "elastic.port");
-			// refresh_minutes = configuration.get(Integer.class, "refresh_minutes");
 			httpPort = configuration.get(Integer.class, "http.port");
 			page_size = configuration.get(Integer.class, "page_size");
 			orgname = configuration.get(String.class, "orgname").trim();
 			elasticHost = configuration.get(String.class, "elastic.host").trim();
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e);
 			throw e;
 		}
 	}

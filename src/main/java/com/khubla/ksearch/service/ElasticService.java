@@ -55,7 +55,7 @@ public class ElasticService {
 		 */
 		private static RestHighLevelClientFactory instance = null;
 
-		private static RestHighLevelClientFactory getInstance() {
+		private static synchronized RestHighLevelClientFactory getInstance() {
 			if (null == instance) {
 				instance = new RestHighLevelClientFactory();
 			}
