@@ -11,8 +11,8 @@
 		<required-maven-version>3.3.1</required-maven-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<commons-cli.version>1.4</commons-cli.version>
-		<commons-io.version>2.9.0</commons-io.version>
-		<elastic.version>7.13.4</elastic.version>
+		<commons-io.version>2.11.0</commons-io.version>
+		<elastic.version>7.13.0</elastic.version>
 		<spark.version>2.9.3</spark.version>
 		<jetty.version>9.4.40.v20210413</jetty.version>
 		<log4j.version>2.14.1</log4j.version>
