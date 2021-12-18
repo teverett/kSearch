@@ -10,7 +10,7 @@
 		<target.jvm>1.8</target.jvm>
 		<required-maven-version>3.3.1</required-maven-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<commons-cli.version>1.4</commons-cli.version>
+		<commons-cli.version>1.5.0</commons-cli.version>
 		<commons-io.version>2.11.0</commons-io.version>
 		<elastic.version>7.13.0</elastic.version>
 		<spark.version>2.9.3</spark.version>
