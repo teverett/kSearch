@@ -15,7 +15,7 @@
 		<elastic.version>7.17.8</elastic.version>
 		<spark.version>2.9.4</spark.version>
 		<jetty.version>[9.4.43,)</jetty.version>
-		<log4j.version>2.19.0</log4j.version>
+		<log4j.version>2.20.0</log4j.version>
 		<pdfbox.version>2.0.27</pdfbox.version>
 		<gson.version>2.10</gson.version>
 		<poi.version>5.2.3</poi.version>
